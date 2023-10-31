@@ -1,0 +1,29 @@
+.my-audio-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.audio-progress-bar {
+    flex-grow: 1;
+    height: 10px;
+    background-color: #eee;
+}
+
+.audio-progress-bar > div {
+    height: 100%;
+    background-color: #0078d4;
+    width: 0;
+}
+button {
+    padding: 8px 12px;
+    border: none;
+    background-color: #FFFFFF; /* Couleur de fond blanche */
+    color: #000000; /* Couleur de texte noire */
+    cursor: pointer;
+    outline: none;
+    transition: background-color 0.2s, transform 0.2s;
+}
+button:hover {
+    background-color: rgba(255, 0, 0, 0.1);
+}
