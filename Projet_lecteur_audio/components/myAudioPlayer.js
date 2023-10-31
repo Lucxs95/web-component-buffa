@@ -606,7 +606,6 @@ body {
     position: sticky;
     top: 0;
     z-index: 10; /* ensure it stays on top */
-    background-color: rgba(31, 31, 31, 0.7); /* match the background color of the song items */
     padding: 10px 0; /* some padding for aesthetics */
     text-align: center; /* center the title */
 }
