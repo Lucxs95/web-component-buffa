@@ -52,7 +52,7 @@ class MyAudioPlayer extends HTMLElement {
                 <playlist-component></playlist-component>
                 <lecteur-component></lecteur-component>
                 <queue-component></queue-component>
-                <mixtable-component></mixtable-component>
+                <mixtable-component class="mixTable-wrapper"></mixtable-component>
                 <visualizer-component></visualizer-component>
 
             </div>

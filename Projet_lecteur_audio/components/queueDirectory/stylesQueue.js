@@ -13,8 +13,6 @@ const styles = `
 }
 
     .queue-wrapper {
-    grid-column: 3 / 4;  /* Position in the third column */
-    grid-row: 1 / 2;    /* Position in the first row */
     display: flex;
     flex-direction: column; /* This makes the content flow vertically */
     justify-content: flex-start; /* Align the content to the top */

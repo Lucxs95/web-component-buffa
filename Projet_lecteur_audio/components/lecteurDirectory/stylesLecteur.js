@@ -339,8 +339,6 @@ const styles = `
 }
 
     .music-card__wrapper {
-    grid-column: 2 / 3;  /* Position in the second column */
-    grid-row: 1 / 2;    /* Position in the first row */
     display: flex;
     justify-content: center;
     align-items: center;

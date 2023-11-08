@@ -16,7 +16,7 @@ const styles = `
     display: grid;
     grid-template-columns: 1fr 2fr 1fr;  /* 3 columns */
     grid-template-rows: 1fr 1fr;         /* 2 rows */
-    gap: 20px;                           /* Gap between grid items */
+    gap: 15px;                           /* Gap between grid items */
     padding: 10px;                       /* Some padding around */
 }
 
@@ -45,6 +45,15 @@ const styles = `
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+.mixTable-wrapper {
+    grid-column: span 2;  /* Position in the second column */
+    grid-row: 2 / 2;    /* Position in the second row */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;  /* ensure it takes full height of its grid cell */
 }
 
 

@@ -13,8 +13,6 @@ const styles = `
 }
 
     .new-wrapper {
-    grid-column: 3 / 4;  /* Position in the third column */
-    grid-row: 2 / 3;    /* Position in the second row */
     display: flex;
     justify-content: center;
     align-items: center;
