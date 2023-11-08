@@ -12,12 +12,10 @@ class MyAudioPlayer extends HTMLElement {
         this.playList = playList;
         this.queue = []; // Initialize the queue as empty
     }
-
     connectedCallback() {
         this.render();
         this.setupEventListeners();
     }
-
     generateSongTabs(songs, addIcon) {
         return songs.map((song, index) => `
             <div class="playlist__song" data-song-index="${index}">
@@ -35,7 +33,6 @@ class MyAudioPlayer extends HTMLElement {
             </div>
         `).join('');
     }
-
     render() {
         const currentMusic = this.playList[this.selectedMusic];
         const songTabs = this.generateSongTabs(this.playList, 'fa-plus');
@@ -119,7 +116,6 @@ class MyAudioPlayer extends HTMLElement {
             </div>
         `;
     }
-
     setupEventListeners() {
 
         const play = this.shadowRoot.querySelector('#play');
@@ -224,7 +220,6 @@ class MyAudioPlayer extends HTMLElement {
         const volumeSlider = this.shadowRoot.querySelector('#volumeSlider');
         music.volume = volumeSlider.value;
     }
-
     toggleShuffle() {
         // Toggle the shuffle state
         this.isShuffled = !this.isShuffled;
@@ -250,21 +245,18 @@ class MyAudioPlayer extends HTMLElement {
         // Update the queue display
         this.updateQueueDisplay();
     }
-
     shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             let j = Math.floor(Math.random() * (i + 1));
             [array[i], array[j]] = [array[j], array[i]];
         }
     }
-
     updateQueueDisplay() {
         // Update the queue in the DOM
         const queueTabs = this.generateSongTabs(this.queue, 'fa-minus');
         const queueContent = this.shadowRoot.querySelector('.queue-content');
         queueContent.innerHTML = queueTabs;
     }
-
     toggleLoop() {
         const loopButton = this.shadowRoot.querySelector('#loop');
         const loopIcon = this.shadowRoot.querySelector('#loop > i');
@@ -275,7 +267,6 @@ class MyAudioPlayer extends HTMLElement {
         loopButton.classList.toggle('active', this.isLooping);
         loopIcon.classList.toggle('active', this.isLooping);
     }
-
     handleMusicEnd() {
         // Check if the song that just ended is the same as the first in the queue
         if (this.queue.length > 0 && this.queue[0] === this.playList[this.selectedMusic]) {
@@ -302,7 +293,6 @@ class MyAudioPlayer extends HTMLElement {
         // Always update the queue display after handling the end of a song
         this.updateQueueDisplay();
     }
-
     playMusic() {
         const music = this.shadowRoot.querySelector('audio');
         if (!music.src) {
@@ -327,7 +317,6 @@ class MyAudioPlayer extends HTMLElement {
             musicCard.classList.remove('middle-weight');
         }, 200);
     }
-
     pauseMusic() {
         const music = this.shadowRoot.querySelector('audio');
         const playIcon = this.shadowRoot.querySelector('.play-icon');
@@ -336,7 +325,6 @@ class MyAudioPlayer extends HTMLElement {
         playIcon.classList.replace('fa-pause', 'fa-play');
         this.isPlaying = false;
     }
-
     nextMusic() {
         if (this.queue.length > 0) {
             // Move to the next song in the queue
@@ -367,7 +355,6 @@ class MyAudioPlayer extends HTMLElement {
         // Update the queue display in either case
         this.updateQueueDisplay();
     }
-
     prevMusic() {
         if (this.isLooping) {
             // If looping (redo) is active, play the same song again
@@ -380,7 +367,6 @@ class MyAudioPlayer extends HTMLElement {
         this.loadMusic(this.playList[this.selectedMusic]);
         if (this.isPlaying) this.playMusic();
     }
-
     updateProgress() {
         const music = this.shadowRoot.querySelector('audio');
         const progressBar = this.shadowRoot.querySelector('#progress-bar');
@@ -388,7 +374,6 @@ class MyAudioPlayer extends HTMLElement {
         const progressPercent = (music.currentTime / music.duration) * 100;
         progressBar.style.width = `${progressPercent}%`;
     }
-
     setMusicTime() {
         const music = this.shadowRoot.querySelector('audio');
         const currentTimeDisplay = this.shadowRoot.querySelector('.music-current-time');
@@ -397,7 +382,6 @@ class MyAudioPlayer extends HTMLElement {
         currentTimeDisplay.textContent = this.formatTime(music.currentTime);
         durationTimeDisplay.textContent = this.formatTime(music.duration);
     }
-
     setProgress(e) {
         const music = this.shadowRoot.querySelector('audio');
         const progressZone = this.shadowRoot.querySelector('.music-progress');
@@ -408,7 +392,6 @@ class MyAudioPlayer extends HTMLElement {
         const fraction = clickX / width;
         music.currentTime = fraction * music.duration;
     }
-
     loadMusic(musicInfo) {
         const music = this.shadowRoot.querySelector('audio');
         const musicImage = this.shadowRoot.querySelector('.music-image');
@@ -424,12 +407,10 @@ class MyAudioPlayer extends HTMLElement {
         musicArtist.textContent = musicInfo.artist;
         music.volume = volumeSlider.value;
     }
-
     formatTime(seconds) {
         const min = Math.floor(seconds / 60);
         const sec = Math.floor(seconds % 60);
         return `${min}:${sec < 10 ? '0' : ''}${sec}`;
     }
 }
-
 customElements.define('my-audio-player', MyAudioPlayer);
