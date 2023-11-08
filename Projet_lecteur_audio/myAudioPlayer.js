@@ -36,15 +36,10 @@ class MyAudioPlayer extends HTMLElement {
         `).join('');
     }
 
-
     render() {
         const currentMusic = this.playList[this.selectedMusic];
         const songTabs = this.generateSongTabs(this.playList, 'fa-plus');
         const queueTabs = this.generateSongTabs(this.queue, 'fa-minus');
-
-        // Adding 'now playing' section
-        const nowPlaying = this.queue.length > 0 ? this.generateNowPlaying(this.queue[0]) : '';
-
 
         this.shadowRoot.innerHTML = `
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
