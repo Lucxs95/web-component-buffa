@@ -29,16 +29,16 @@ class Queue extends HTMLElement {
         return songs.map((song, index) => `
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
             <style>${stylesQueue}</style>
-            <div class="playlist__song" data-song-index="${index}">
-                <img class="playlist__song-cover" src="${song.cover}" alt="${song.musicName} cover">
-                <div class="playlist__song-info">
-                    <span class="playlist__song-title">${song.musicName}</span>
-                    <span class="playlist__song-artist">${song.artist}</span>
+            <div class="queue__song" data-song-index="${index}">
+                <img class="queue__song-cover" src="${song.cover}" alt="${song.musicName} cover">
+                <div class="queue__song-info">
+                    <span class="queue__song-title">${song.musicName}</span>
+                    <span class="queue__song-artist">${song.artist}</span>
                 </div>
-                <button class="playlist__song-play">
+                <button class="queue__song-play">
                     <i class="fas fa-play"></i>
                 </button>
-                <button class="playlist__song-add">
+                <button class="queue__song-add">
                     <i class="fas ${addIcon}"></i>
                 </button>
             </div>

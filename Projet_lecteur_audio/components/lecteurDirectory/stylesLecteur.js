@@ -7,46 +7,6 @@ const styles = `
     font-family: 'Georama', sans-serif;
 }
 
-    body {
-    background-color: rgb(31, 31, 31);
-    overflow: hidden;
-}
-
-    .section {
-    display: grid;
-    grid-template-columns: 1fr 2fr 1fr;  /* 3 columns */
-    grid-template-rows: 1fr 1fr;         /* 2 rows */
-    gap: 20px;                           /* Gap between grid items */
-    padding: 10px;                       /* Some padding around */
-}
-
-    .section__background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-}
-
-    .section__background:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    background-color: rgba(31, 31, 31, .8);
-    height: 100vh;
-    backdrop-filter: blur(20px);
-    z-index: 11;
-}
-
-    .section__background-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
     .music-card {
     position: relative;
     max-width: 400px;    /* Increase the maximum width */
@@ -372,27 +332,10 @@ const styles = `
     margin-top: -5px;  /* Adjust margin to center the thumb on the track */
 }
 
-
-
-
     #volumeSlider::-webkit-slider-runnable-track {
     height: 5px;
     border-radius: 5px;
     background-color: #fff;
-}
-
-
-
-
-    .playlist-wrapper {
-    grid-column: 1 / 2;  /* Position in the first column */
-    grid-row: 1 / 2;    /* Position in the first row */
-    display: flex;
-    flex-direction: column; /* This makes the content flow vertically */
-    justify-content: flex-start; /* Align the content to the top */
-    align-items: center;
-    height: 100%;  /* ensure it takes full height of its grid cell */
-    margin: auto;
 }
 
     .music-card__wrapper {
@@ -403,140 +346,6 @@ const styles = `
     align-items: center;
     height: 100%;  /* ensure it takes full height of its grid cell */
 }
-    .queue-wrapper {
-    grid-column: 3 / 4;  /* Position in the third column */
-    grid-row: 1 / 2;    /* Position in the first row */
-    display: flex;
-    flex-direction: column; /* This makes the content flow vertically */
-    justify-content: flex-start; /* Align the content to the top */
-    align-items: center;
-    height: 100%;  /* ensure it takes full height of its grid cell */
-    margin: auto;
-}
-    .mixTable-wrapper {
-    grid-column: 2 / 3;  /* Position in the second column */
-    grid-row: 2 / 2;    /* Position in the second row */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;  /* ensure it takes full height of its grid cell */
-}
-    .new-wrapper {
-    grid-column: 3 / 4;  /* Position in the third column */
-    grid-row: 2 / 3;    /* Position in the second row */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;  /* ensure it takes full height of its grid cell */
-}
-    .playlist__song {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-    padding: 10px;
-    background-color: rgba(31, 31, 31, 0.7);
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-    .playlist__song:hover {
-    background-color: rgba(31, 31, 31, 0.9);
-}
-
-    .playlist__song-cover {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border-radius: 10px;
-    margin-right: 15px;
-}
-
-    .playlist__song-info {
-    flex-grow: 1;
-}
-
-    .playlist__song-title {
-    display: block;
-    color: rgba(255, 255, 255, 0.8);
-    margin-bottom: 5px;
-}
-
-    .playlist__song-artist {
-    color: rgba(255, 255, 255, 0.5);
-}
-
-    .playlist__song-play,.playlist__song-add {
-    padding: 5px 10px;
-    border: none;
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #fff;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-    .playlist__song-play:hover,.playlist__song-add:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-}
-
-
-    /* Styling the scrollbar for WebKit browsers */
-    .playlist::-webkit-scrollbar, .queue::-webkit-scrollbar{
-    width: 10px; /* width of the scrollbar */
-}
-
-
-
-    .playlist {
-    max-height: 100vh;  /* Set a maximum height */
-    direction: rtl;
-    overflow-y: auto;  /* Set overflow to auto for vertical scrolling */
-    width: 100%;       /* Ensure it takes full width */
-    padding: 0px;     /* Some padding for aesthetics */
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.4) rgba(255, 255, 255, 0.1);
-}
-
-    .queue {
-    max-height: 100vh;  /* Set a maximum height */
-
-    overflow-y: auto;  /* Set overflow to auto for vertical scrolling */
-    width: 100%;       /* Ensure it takes full width */
-    padding: 0px;     /* Some padding for aesthetics */
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.4) rgba(255, 255, 255, 0.1);
-}
-
-
-    .playlist-content, .queue-content {
-    direction: ltr; /* revert the direction */
-    width: 98%; /* slightly less than 100% to fit within the extra space in .playlist */
-    float: right; /* push the content to the right side */
-    max-height: 400px; /* for example, limit the height to 400px */
-}
-
-
-    .playlist__title , .queue__title {
-    font-size: 24px;  /* Setting a font size */
-    font-weight: bold; /* Making the text bold */
-    color: #ffffff;  /* Setting a text color */
-    margin-bottom: 20px;  /* Giving some space below the title */
-    text-align: center;  /* Center aligning the text */
-    text-transform: uppercase; /* Making the text uppercase */
-}
-
-    .music-placeholder {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 150px; /* or any other appropriate size */
-        text-align: center;
-        color: #aaa; /* placeholder text color */
-        background-color: #f4f4f4; /* placeholder background */
-        border: 1px dashed #ccc; /* optional: placeholder border */
-}
-
 `;
 
 export default styles;

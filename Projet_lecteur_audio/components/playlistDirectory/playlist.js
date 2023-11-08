@@ -15,7 +15,7 @@ class Playlist extends HTMLElement {
         this.shadowRoot.innerHTML = `
             <style>${stylesPlaylist}</style>
              <div class="playlist-wrapper">
-                <div class="playlist__header">
+                <div>
                     <h3 class="playlist__title">Playlist</h3>
                 </div>
                 <div class="playlist">

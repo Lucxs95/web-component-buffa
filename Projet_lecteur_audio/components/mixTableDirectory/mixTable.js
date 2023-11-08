@@ -14,8 +14,8 @@ class MixTable extends HTMLElement {
             <style>${stylesmixTable}</style>
             <div class="mixTable-wrapper">
                 <div class="mixTable">
-                    <div class="mixTable__header">
-                        <h3 class="mixTable__title">Mix Table</h3>
+                    <div>
+                        <h3>Mix Table</h3>
                     </div>
                 </div>
             </div>
