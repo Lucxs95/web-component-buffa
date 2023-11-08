@@ -40,7 +40,6 @@ const styles = `
     backdrop-filter: blur(20px);
     z-index: 11;
 }
-    }
 
     .section__background-image {
     width: 100%;

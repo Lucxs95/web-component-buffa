@@ -1,6 +1,10 @@
-import playList from './assets/modules/data.js';
-import styles from './assets/modules/styles.js';
-import './components/lecteur.js';
+import playList from '../assets/data.js';
+import styles from './styles.js';
+import './lecteurDirectory/lecteur.js';
+import './playlistDirectory/playlist.js';
+import './queueDirectory/queue.js';
+import './mixTableDirectory/mixTable.js';
+import './visualizerDirectory/visualizer.js';
 
 class MyAudioPlayer extends HTMLElement {
     constructor() {
@@ -13,11 +17,13 @@ class MyAudioPlayer extends HTMLElement {
         this.playList = playList;
         this.queue = playList; // Initialize the queue as empty
     }
+
     connectedCallback() {
         this.render();
         this.updateCurrentMusic(); // Add this line to call the update method after the component is rendered.
         this.setupEventListeners();
     }
+
     updateCurrentMusic() {
         const lecteurComponent = this.shadowRoot.querySelector('lecteur-component');
         const currentMusic = this.playList[this.selectedMusic];
@@ -25,66 +31,34 @@ class MyAudioPlayer extends HTMLElement {
             lecteurComponent.currentMusic = currentMusic;
         }
     }
-    generateSongTabs(songs, addIcon) {
-        return songs.map((song, index) => `
-            <div class="playlist__song" data-song-index="${index}">
-                <img class="playlist__song-cover" src="${song.cover}" alt="${song.musicName} cover">
-                <div class="playlist__song-info">
-                    <span class="playlist__song-title">${song.musicName}</span>
-                    <span class="playlist__song-artist">${song.artist}</span>
-                </div>
-                <button class="playlist__song-play">
-                    <i class="fas fa-play"></i>
-                </button>
-                <button class="playlist__song-add">
-                    <i class="fas ${addIcon}"></i>
-                </button>
-            </div>
-        `).join('');
-    }
+
+
     render() {
         const currentMusic = this.playList[this.selectedMusic];
-        const songTabs = this.generateSongTabs(this.playList, 'fa-plus');
-        const queueTabs = this.generateSongTabs(this.queue, 'fa-minus');
 
         this.shadowRoot.innerHTML = `
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-            <script type="module" src="./components/lecteur.js"></script>
+            <script type="module" src="lecteurDirectory/lecteur.js"></script>
+            <script type="module" src="playlistDirectory/playlist.js"></script>
+            <script type="module" src="queueDirectory/queue.js"></script>
+            <script type="module" src="mixTableDirectory/mixTable.js"></script>
+            <script type="module" src="visualizerDirectory/visualizer.js"></script>
             <style>${styles}</style>
              <div class="section">
-            <div class="section__background">
-                <img id="backgroundImage" class="section__background-image" src="" alt="">
-            </div>
-                <div class="playlist-wrapper">
-                    <div class="playlist__header">
-                        <h3 class="playlist__title">Playlist</h3>
-                    </div>
-                    <div class="playlist">
-                        <div class="playlist-content">${songTabs}</div>
-                    </div>
+                <div class="section__background">
+                    <img id="backgroundImage" class="section__background-image" src="" alt="">
                 </div>
+
+                <playlist-component></playlist-component>
                 <lecteur-component></lecteur-component>
-                
-            
-            <div class="queue-wrapper">
-                    <div class="queue__header">
-                        <h3 class="queue__title">File d'attente</h3>
-                    </div>
-                    <div class="queue">
-                        <div class="queue-content">${queueTabs}</div>
-                    </div>
-                </div>
-                <div class="mixTable-wrapper">
-                    <div class="mixTable">
-                        <div class="mixTable__header">
-                            <h3 class="mixTable__title">Mix Table</h3>
-                        </div>
-                    </div>
-                </div>
+                <queue-component></queue-component>
+                <mixtable-component></mixtable-component>
+                <visualizer-component></visualizer-component>
 
             </div>
         `;
     }
+
     setupEventListeners() {
         this.shadowRoot.addEventListener('click', (e) => {
             if (e.target.classList.contains('playlist__song-play')) {
@@ -138,7 +112,7 @@ class MyAudioPlayer extends HTMLElement {
         });
         this.shadowRoot.addEventListener('click', (e) => {
             // Check if the minus button in the queue was clicked
-            if (e.target.classList.contains('fa-minus') ) {
+            if (e.target.classList.contains('fa-minus')) {
                 // Get the parent .playlist__song to find the index of the song
                 const songElement = e.target.closest('.playlist__song');
                 const songIndex = parseInt(songElement.getAttribute('data-song-index'));
@@ -150,12 +124,6 @@ class MyAudioPlayer extends HTMLElement {
                 this.updateQueueDisplay();
             }
         });
-    }
-    updateQueueDisplay() {
-        // Update the queue in the DOM
-        const queueTabs = this.generateSongTabs(this.queue, 'fa-minus');
-        const queueContent = this.shadowRoot.querySelector('.queue-content');
-        queueContent.innerHTML = queueTabs;
     }
     playMusic() {
         const music = this.shadowRoot.querySelector('audio');
@@ -181,6 +149,7 @@ class MyAudioPlayer extends HTMLElement {
             musicCard.classList.remove('middle-weight');
         }, 200);
     }
+
     loadMusic(musicInfo) {
         const music = this.shadowRoot.querySelector('audio');
         const musicImage = this.shadowRoot.querySelector('.music-image');
@@ -198,4 +167,5 @@ class MyAudioPlayer extends HTMLElement {
     }
 
 }
+
 customElements.define('my-audio-player', MyAudioPlayer);

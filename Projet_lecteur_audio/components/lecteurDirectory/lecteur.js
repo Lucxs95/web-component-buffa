@@ -1,6 +1,4 @@
-
-import styles from '../assets/modules/styles.js';
-
+import stylesLecteur from './stylesLecteur.js';
 class Lecteur extends HTMLElement {
     constructor() {
         super();
@@ -14,7 +12,6 @@ class Lecteur extends HTMLElement {
         this.queue = [];
     }
     set currentMusic(data) {
-        console.log('Setting currentMusic:', data);
         this._currentMusic = data;
         this.render();
     }
@@ -31,7 +28,7 @@ class Lecteur extends HTMLElement {
         if (this.currentMusic) {
             this.shadowRoot.innerHTML = `
                 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-                <style>${styles}</style>
+                <style>${stylesLecteur}</style>
                 <div class="music-card__wrapper">
                     <div class="music-card">
                         <div class="music-card__content">
