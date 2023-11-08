@@ -1,5 +1,5 @@
-import playList from './modules/data.js';
-import styles from './modules/styles.js';
+import playList from './assets/modules/data.js';
+import styles from './assets/modules/styles.js';
 
 class MyAudioPlayer extends HTMLElement {
     constructor() {
