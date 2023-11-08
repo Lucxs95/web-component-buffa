@@ -10,7 +10,7 @@ class MyAudioPlayer extends HTMLElement {
         this.isShuffled = false;
         this.isLooping = false;
         this.playList = playList;
-        this.queue = playList;
+        this.queue = []; // Initialize the queue as empty
     }
 
     connectedCallback() {
@@ -36,18 +36,23 @@ class MyAudioPlayer extends HTMLElement {
         `).join('');
     }
 
+
     render() {
         const currentMusic = this.playList[this.selectedMusic];
         const songTabs = this.generateSongTabs(this.playList, 'fa-plus');
         const queueTabs = this.generateSongTabs(this.queue, 'fa-minus');
 
+        // Adding 'now playing' section
+        const nowPlaying = this.queue.length > 0 ? this.generateNowPlaying(this.queue[0]) : '';
+
+
         this.shadowRoot.innerHTML = `
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
             <style>${styles}</style>
-            <div class="section">
-                <div class="section__background">
-                    <img id="backgroundImage" class="section__background-image" src="${currentMusic.cover}" alt="">
-                </div>
+             <div class="section">
+            <div class="section__background">
+                <img id="backgroundImage" class="section__background-image" src="" alt="">
+            </div>
                 <div class="playlist-wrapper">
                     <div class="playlist__header">
                         <h3 class="playlist__title">Playlist</h3>
@@ -115,11 +120,7 @@ class MyAudioPlayer extends HTMLElement {
                         </div>
                     </div>
                 </div>
-                <div class="new-wrapper">
-                    <video controls width="100%" autoplay loop muted>
-                        <source src="" type="video/mp4">
-                    </video>
-                </div>
+
             </div>
         `;
     }
@@ -161,8 +162,67 @@ class MyAudioPlayer extends HTMLElement {
         music.addEventListener('ended', this.handleMusicEnd.bind(this));
         progressZone.addEventListener('click', this.setProgress.bind(this));
 
-        // Load the default music
-        this.loadMusic(this.playList[0]);
+        this.shadowRoot.addEventListener('click', (e) => {
+            if (e.target.classList.contains('playlist__song-play')) {
+                const songIndex = e.target.parentElement.getAttribute('data-song-index');
+                this.selectedMusic = parseInt(songIndex);
+                this.loadMusic(this.playList[this.selectedMusic]);
+                this.playMusic();
+
+                // Add the currently playing song to the beginning of the queue if it's not already there
+                if (!this.queue.some(song => song === this.playList[this.selectedMusic])) {
+                    this.queue.unshift(this.playList[this.selectedMusic]);
+                }
+                // Update the queue display
+                this.updateQueueDisplay();
+            }
+        });
+
+        this.shadowRoot.addEventListener('click', (e) => {
+            // Check if the plus button in the playlist was clicked
+            if (e.target.classList.contains('fa-plus')) {
+                const songIndex = e.target.closest('.playlist__song').getAttribute('data-song-index');
+                const songToAdd = this.playList[parseInt(songIndex)];
+                // Add the song to the queue if it's not already there
+                if (!this.queue.includes(songToAdd)) {
+                    this.queue.push(songToAdd);
+                    // If this is the first song in the queue, load and play it
+                    if (this.queue.length === 1) {
+                        this.loadMusic(songToAdd);
+                        this.playMusic();
+                    }
+                    // Update the queue display
+                    this.updateQueueDisplay();
+                }
+            }
+        });
+
+        this.shadowRoot.addEventListener('click', (e) => {
+            // Check if the minus button in the queue was clicked
+            if (e.target.closest('.queue__song-add')) {
+                const songIndex = e.target.closest('.queue__song').getAttribute('data-song-index');
+                this.queue.splice(parseInt(songIndex), 1);
+                // Update the queue display
+                this.updateQueueDisplay();
+            }
+        });
+
+        this.shadowRoot.addEventListener('click', (e) => {
+            // Check if the minus button in the queue was clicked
+            if (e.target.classList.contains('fa-minus') ) {
+                // Get the parent .playlist__song to find the index of the song
+                const songElement = e.target.closest('.playlist__song');
+                const songIndex = parseInt(songElement.getAttribute('data-song-index'));
+
+                // Remove the song from the queue array
+                this.queue.splice(songIndex, 1);
+
+                // Update the queue display
+                this.updateQueueDisplay();
+            }
+        });
+
+
     }
     updateVolume() {
         const music = this.shadowRoot.querySelector('audio');
@@ -171,14 +231,43 @@ class MyAudioPlayer extends HTMLElement {
     }
 
     toggleShuffle() {
-        const shuffleButton = this.shadowRoot.querySelector('#shuffle');
-        const shuffleIcon = this.shadowRoot.querySelector('#shuffle > i');
-
+        // Toggle the shuffle state
         this.isShuffled = !this.isShuffled;
 
-        // Toggle the 'active' class on both the button and the icon
+        // Update the shuffle button appearance
+        const shuffleButton = this.shadowRoot.querySelector('#shuffle');
+        const shuffleIcon = shuffleButton.querySelector('i');
         shuffleButton.classList.toggle('active', this.isShuffled);
-        shuffleIcon.classList.toggle('active', this.isShuffled);
+        shuffleIcon.classList.toggle('fa-random', this.isShuffled);
+        shuffleIcon.classList.toggle('fa-undo', !this.isShuffled);
+
+        // Only shuffle if there are more than one item in the queue to shuffle
+        if (this.isShuffled && this.queue.length > 1) {
+            // Keep the currently playing song intact and shuffle the rest of the queue
+            let currentSong = this.queue.slice(0, 1); // Take the currently playing song out
+            let songsToShuffle = this.queue.slice(1); // Extract the songs to shuffle
+
+            this.shuffleArray(songsToShuffle); // Shuffle the remaining songs
+
+            this.queue = [...currentSong, ...songsToShuffle]; // Combine the currently playing song with the shuffled songs
+        }
+
+        // Update the queue display
+        this.updateQueueDisplay();
+    }
+
+    shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            let j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    updateQueueDisplay() {
+        // Update the queue in the DOM
+        const queueTabs = this.generateSongTabs(this.queue, 'fa-minus');
+        const queueContent = this.shadowRoot.querySelector('.queue-content');
+        queueContent.innerHTML = queueTabs;
     }
 
     toggleLoop() {
@@ -193,17 +282,45 @@ class MyAudioPlayer extends HTMLElement {
     }
 
     handleMusicEnd() {
-        if (this.isLooping) {
-            // If redo is active, simply play the current song again
+        // Check if the song that just ended is the same as the first in the queue
+        if (this.queue.length > 0 && this.queue[0] === this.playList[this.selectedMusic]) {
+            this.queue.shift(); // Remove the first element from the queue
+        }
+
+        // If the queue is not empty, play the next song from the queue
+        if (this.queue.length > 0) {
+            // Set the next song in the queue as the selected music
+            const nextSong = this.queue[0];
+            this.selectedMusic = this.playList.findIndex(song => song === nextSong);
+            // Load and play the next song
+            this.loadMusic(nextSong);
+            this.playMusic();
+        } else if (this.isLooping) {
+            // If loop is active and the queue is empty, play the current song again
+            this.loadMusic(this.playList[this.selectedMusic]);
             this.playMusic();
         } else {
-            // Otherwise, move to the next song in the playlist (or shuffle if that's active)
+            // If the queue is empty and loop is not active, move to the next song in the playlist
             this.nextMusic();
         }
+
+        // Always update the queue display after handling the end of a song
+        this.updateQueueDisplay();
     }
 
     playMusic() {
         const music = this.shadowRoot.querySelector('audio');
+        if (!music.src) {
+            // If there is no source, it means no song is loaded yet.
+            // You could load the first song from the queue if it's not empty.
+            if (this.queue.length > 0) {
+                this.loadMusic(this.queue[0]);
+            } else {
+                console.error("No music in the queue to play.");
+                return; // Exit if there's nothing to play.
+            }
+        }
+
         const playIcon = this.shadowRoot.querySelector('.play-icon');
         const musicCard = this.shadowRoot.querySelector('.music-card');
 
@@ -226,20 +343,34 @@ class MyAudioPlayer extends HTMLElement {
     }
 
     nextMusic() {
-        if (this.isLooping) {
-            // If looping (redo) is active, play the same song again
+        if (this.queue.length > 0) {
+            // Move to the next song in the queue
+            this.queue.shift(); // Remove the current song from the queue
+            if (this.queue.length > 0) {
+                // Load and play the next song in the queue
+                const nextSong = this.queue[0];
+                this.selectedMusic = this.playList.findIndex(song => song === nextSong);
+                this.loadMusic(nextSong);
+                if (this.isPlaying) this.playMusic();
+            } else {
+                // If the queue becomes empty, just load the next song but don't play automatically
+                this.selectedMusic = (this.selectedMusic + 1) % this.playList.length;
+                this.loadMusic(this.playList[this.selectedMusic]);
+            }
+        } else if (this.isShuffled) {
+            // Shuffle logic as before
+            this.selectedMusic = Math.floor(Math.random() * this.playList.length);
             this.loadMusic(this.playList[this.selectedMusic]);
             if (this.isPlaying) this.playMusic();
-            return;
+        } else {
+            // Normal next logic as before
+            this.selectedMusic = (this.selectedMusic + 1) % this.playList.length;
+            this.loadMusic(this.playList[this.selectedMusic]);
+            if (this.isPlaying) this.playMusic();
         }
 
-        if (this.isShuffled) {
-            this.selectedMusic = Math.floor(Math.random() * this.playList.length);
-        } else {
-            this.selectedMusic = (this.selectedMusic + 1) % this.playList.length;
-        }
-        this.loadMusic(this.playList[this.selectedMusic]);
-        if (this.isPlaying) this.playMusic();
+        // Update the queue display in either case
+        this.updateQueueDisplay();
     }
 
     prevMusic() {
