@@ -3,7 +3,7 @@ import stylesLecteur from './stylesLecteur.js';
 class Lecteur extends HTMLElement {
     constructor() {
         super();
-        this.attachShadow({ mode: 'open' });
+        this.attachShadow({mode: 'open'});
 
         // State properties
         this.isPlaying = false;
@@ -20,16 +20,20 @@ class Lecteur extends HTMLElement {
         }
         this.setupEventListeners();
     }
+
     get currentMusic() {
         return this._currentMusic;
     }
+
     set currentMusic(music) {
         this._currentMusic = music;
         this.render();
     }
+
     get queue() {
         return this._queue;
     }
+
     set queue(newQueue) {
         this._queue = newQueue;
         // If the current music is not in the new queue, play the first song of the new queue
@@ -40,6 +44,7 @@ class Lecteur extends HTMLElement {
             }
         }
     }
+
     render() {
         // Render the UI with the current music data
         if (this.currentMusic) {
@@ -90,13 +95,61 @@ class Lecteur extends HTMLElement {
 
             // Setup event listeners after rendering new elements
             this.setupEventListeners();
+        } else {
+            // Render a different UI when there is no song
+            this.shadowRoot.innerHTML = `
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+                <style>${stylesLecteur}</style>
+                <div class="music-card__wrapper">
+                    <div class="music-card">
+                        <div class="music-card__content">
+                            <img class="music-image" src="https://static.vecteezy.com/system/resources/previews/021/736/279/non_2x/transparent-background-4k-empty-grid-checkered-layout-wallpaper-free-vector.jpg" >
+                            <div class="music-info">
+                                <h2 class="music-name">N/A</h2>
+                                <p class="music-artist">N/A</p>
+                            </div>
+                            <div class="music-progress">
+                                <div id="progress-bar" class="music-progress-bar"></div>
+                                <div class="music-progress__time">
+                                    <span class="music-progress__time-item music-current-time">00:00</span>
+                                    <span class="music-progress__time-item music-duration-time">00:00</span>
+                                </div>
+                            </div>
+                            <div class="music-controls">
+                                <button id="loop" class="music-controls-item">
+                                    <i class="fas fa-redo music-controls-item--icon"></i>
+                                </button>
+                                <button id="prev" class="music-controls-item">
+                                    <i class="fas fa-backward music-controls-item--icon"></i>
+                                </button>
+                                <button id="play" class="music-controls-item">
+                                    <i class="fas fa-play music-controls-item--icon play-icon"></i>
+                                </button>
+                                <button id="next" class="music-controls-item">
+                                    <i class="fas fa-forward music-controls-item--icon"></i>
+                                </button>
+                                <button id="shuffle" class="music-controls-item">
+                                    <i class="fas fa-random music-controls-item--icon"></i>
+                                </button>
+                            </div>
+                            <div class="volume-controls">
+                                <i class="fas fa-volume-up volume-icon"></i>
+                                <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="1">
+                            </div>                        
+                            </div>
+                    </div>
+                </div>
+            `;
         }
+
     }
+
     updateVolume() {
         const music = this.shadowRoot.querySelector('audio');
         const volumeSlider = this.shadowRoot.querySelector('#volumeSlider');
         music.volume = volumeSlider.value;
     }
+
     toggleShuffle() {
         const shuffleButton = this.shadowRoot.querySelector('#shuffle');
         const shuffleIcon = shuffleButton.querySelector('i');
@@ -112,6 +165,7 @@ class Lecteur extends HTMLElement {
             // Potentially restore the original queue here
         }
     }
+
     shuffleQueue() {
         // Assuming the queue is managed here, otherwise this method should
         // be called where the queue is managed to reorder it.
@@ -125,6 +179,7 @@ class Lecteur extends HTMLElement {
             this.loadMusic(this.queue[0]);
         }
     }
+
     toggleLoop() {
         const loopButton = this.shadowRoot.querySelector('#loop');
         const loopIcon = loopButton.querySelector('i');
@@ -138,6 +193,7 @@ class Lecteur extends HTMLElement {
         const audio = this.shadowRoot.querySelector('audio');
         audio.loop = this.isLooping; // This will cause the audio to loop the current track
     }
+
     playMusic() {
         const audio = this.shadowRoot.querySelector('audio');
         if (audio) {
@@ -146,6 +202,7 @@ class Lecteur extends HTMLElement {
             this.updatePlayButtonIcon();
         }
     }
+
     pauseMusic() {
         const audio = this.shadowRoot.querySelector('audio');
         if (audio) {
@@ -154,6 +211,7 @@ class Lecteur extends HTMLElement {
             this.updatePlayButtonIcon();
         }
     }
+
     updatePlayButtonIcon() {
         const playIcon = this.shadowRoot.querySelector('.play-icon');
         if (playIcon) {
@@ -164,6 +222,7 @@ class Lecteur extends HTMLElement {
             }
         }
     }
+
     updateProgress() {
         const audio = this.shadowRoot.querySelector('audio');
         const progressBar = this.shadowRoot.querySelector('#progress-bar');
@@ -178,6 +237,7 @@ class Lecteur extends HTMLElement {
             durationTimeDisplay.textContent = this.formatTime(audio.duration);
         }
     }
+
     setMusicTime() {
         const audio = this.shadowRoot.querySelector('audio');
         const currentTimeDisplay = this.shadowRoot.querySelector('.music-current-time');
@@ -188,6 +248,7 @@ class Lecteur extends HTMLElement {
             durationTimeDisplay.textContent = this.formatTime(audio.duration);
         }
     }
+
     setProgress(e) {
         const audio = this.shadowRoot.querySelector('audio');
         const progressZone = this.shadowRoot.querySelector('.music-progress');
@@ -199,6 +260,7 @@ class Lecteur extends HTMLElement {
             audio.currentTime = fraction * audio.duration;
         }
     }
+
     nextMusic() {
         const currentIndex = this._queue.findIndex(music => music === this._currentMusic);
         const nextIndex = (currentIndex + 1) % this._queue.length;
@@ -214,6 +276,7 @@ class Lecteur extends HTMLElement {
         this.currentMusic = prevSong; // Update the current music with the previous song
         this.playMusic();
     }
+
     loadMusic(musicInfo) {
         // Ensure 'musicInfo' contains the properties you're trying to access
         const music = this.shadowRoot.querySelector('audio');
@@ -236,11 +299,13 @@ class Lecteur extends HTMLElement {
             this.updateProgress();
         }
     }
+
     formatTime(seconds) {
         const min = Math.floor(seconds / 60);
         const sec = Math.floor(seconds % 60);
         return `${min}:${sec < 10 ? '0' + sec : sec}`;
     }
+
     setupEventListeners() {
         // Bind the context to this class for each event listener
         const playButton = this.shadowRoot.querySelector('#play');
@@ -283,7 +348,7 @@ class Lecteur extends HTMLElement {
             this._queue.splice(currentSongIndex, 1);
 
             // Inform the parent component to update its queue as well
-            this.dispatchEvent(new CustomEvent('songEnded', { detail: { index: currentSongIndex } }));
+            this.dispatchEvent(new CustomEvent('songEnded', {detail: {index: currentSongIndex}}));
         }
     }
 }
