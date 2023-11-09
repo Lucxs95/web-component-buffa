@@ -24,26 +24,26 @@ class MyAudioPlayer extends HTMLElement {
     get queue() {
         return this._queue;
     }
-    set queue(newQueue) {
-        this._queue = newQueue;
-        this.updateQueueDisplay();
-    }
 
     connectedCallback() {
         this.render();
         const playlistComponent = this.shadowRoot.querySelector('playlist-component');
         const queueComponent = this.shadowRoot.querySelector('queue-component');
+        const lecteurComponent = this.shadowRoot.querySelector('lecteur-component');
         if (playlistComponent) {
             playlistComponent.playlist = this._playList;
         }
         if (queueComponent) {
             queueComponent.queue = this._queue;
         }
+        if (lecteurComponent) {
+            lecteurComponent.queue = this._queue; // Pass the updated queue to the Lecteur component
+        }
+        this.updateLecteurQueue();
         this.setupEventListeners();
     }
 
     render() {
-
         this.shadowRoot.innerHTML = `
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
             <script type="module" src="lecteurDirectory/lecteur.js"></script>
@@ -75,11 +75,23 @@ class MyAudioPlayer extends HTMLElement {
         });
 
     }
+    updateLecteurQueue() {
+        const lecteurComponent = this.shadowRoot.querySelector('lecteur-component');
+        if (lecteurComponent) {
+            lecteurComponent.queue = this._queue;
+            // If there is currently no music playing, set the first song in the queue as the current music.
+            if (!this.isPlaying && this._queue.length > 0) {
+                lecteurComponent.currentMusic = this._queue[0];
+            }
+        }
+    }
+
     addToQueue(song) {
         const songExists = this._playList.find(s => s === song);
         if (songExists && !this._queue.includes(song)) {
             this._queue.push(song);
             this.updateQueueDisplay();
+            this.updateLecteurQueue(); // Update the Lecteur component whenever the queue is changed.
         } else {
             console.error('Song does not exist in the playlist');
         }
@@ -90,8 +102,6 @@ class MyAudioPlayer extends HTMLElement {
             queueComponent.queue = this.queue;
         }
     }
-
-
 
 }
 

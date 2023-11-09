@@ -1,19 +1,38 @@
 import stylesLecteur from './stylesLecteur.js';
+
 class Lecteur extends HTMLElement {
     constructor() {
         super();
-        this.attachShadow({mode: 'open'});
+        this.attachShadow({ mode: 'open' });
 
         // State properties
-        this._currentMusic = null;
         this.isPlaying = false;
         this.isShuffled = false;
         this.isLooping = false;
+        this._queue = []; // Queue will be set by parent
     }
 
     connectedCallback() {
-        if (this.currentMusic) {
+        console.log(this._queue);
+        if (this._queue.length > 0) {
+            this.currentMusic = this._queue[0]; // Initialize currentMusic with the first song in the queue
             this.render();
+        }
+    }
+    get currentMusic() {
+        return this._currentMusic;
+    }
+    set currentMusic(music) {
+        this._currentMusic = music;
+        this.render();
+    }
+    get queue() {
+        return this._queue;
+    }
+    set queue(newQueue) {
+        this._queue = newQueue;
+        if (this._queue.length > 0) {
+            this.currentMusic = this._queue[0]; // Set the current music to the first item of the new queue
         }
     }
     render() {
@@ -176,6 +195,7 @@ class Lecteur extends HTMLElement {
         }
     }
     nextMusic() {
+        const currentIndex = this.queue[0];
         // Assuming 'queue' and 'playList' are managed by MyAudioPlayer
         // This is an example and needs to be adapted based on how you manage the queue
         const nextIndex = (this.queue.indexOf(this.currentMusic) + 1) % this.queue.length;
