@@ -4,14 +4,18 @@ class Queue extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({mode: 'open'});
-        this.queue = playList; // Initialize the queue with the playlist data
     }
+    set queue(songs) {
+        this._queue = songs;
+        this.render();
+    }
+
     connectedCallback() {
         this.render();
         this.setupEventListeners();
     }
     render() {
-        const queueTabs = this.generateSongTabs(this.queue, 'fa-minus');
+        const queueTabs = this._queue ? this.generateSongTabs(this._queue, 'fa-minus') : '';
         this.shadowRoot.innerHTML = `
             <style>${stylesQueue}</style>
             <div class="queue-wrapper">
@@ -49,12 +53,6 @@ class Queue extends HTMLElement {
 
     }
 
-    updateQueueDisplay() {
-        // Update the queue in the DOM
-        const queueTabs = this.generateSongTabs(this.queue, 'fa-minus');
-        const queueContent = this.shadowRoot.querySelector('.queue-content');
-        queueContent.innerHTML = queueTabs;
-    }
 }
 
 customElements.define('queue-component', Queue);

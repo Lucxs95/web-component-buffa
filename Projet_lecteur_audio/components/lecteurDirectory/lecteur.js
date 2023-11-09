@@ -9,15 +9,8 @@ class Lecteur extends HTMLElement {
         this.isPlaying = false;
         this.isShuffled = false;
         this.isLooping = false;
-        this.queue = [];
     }
-    set currentMusic(data) {
-        this._currentMusic = data;
-        this.render();
-    }
-    get currentMusic() {
-        return this._currentMusic;
-    }
+
     connectedCallback() {
         if (this.currentMusic) {
             this.render();
