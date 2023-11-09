@@ -68,10 +68,17 @@ class MyAudioPlayer extends HTMLElement {
     }
 
     setupEventListeners() {
+        this.shadowRoot.addEventListener('songEnded', (e) => {
+            const { index } = e.detail;
+            this.removeFromQueue(index);
+        });
         this.shadowRoot.addEventListener('addSongToQueue', (e) => {
             const songIndex = e.detail.index;
             const songToAdd = this.playlist[songIndex];
             this.addToQueue(songToAdd);
+        });
+        this.shadowRoot.addEventListener('removeSongFromQueue', (e) => {
+            this.removeFromQueue(e.detail.index);
         });
 
     }
@@ -82,6 +89,24 @@ class MyAudioPlayer extends HTMLElement {
             // If there is currently no music playing, set the first song in the queue as the current music.
             if (!this.isPlaying && this._queue.length > 0) {
                 lecteurComponent.currentMusic = this._queue[0];
+            }
+        }
+    }
+
+    removeFromQueue(index) {
+        // Remove the song from the queue
+        if (index >= 0 && index < this._queue.length) {
+            const songToRemove = this._queue[index];
+            this._queue.splice(index, 1);
+            this.updateQueueDisplay(); // Update the visual display of the queue
+
+            // If the removed song was the current song, play the next one
+            const lecteurComponent = this.shadowRoot.querySelector('lecteur-component');
+            if (lecteurComponent && lecteurComponent.currentMusic === songToRemove) {
+                lecteurComponent.currentMusic = this._queue[0] || null;
+                if (lecteurComponent.currentMusic) {
+                    lecteurComponent.playMusic();
+                }
             }
         }
     }
@@ -97,9 +122,10 @@ class MyAudioPlayer extends HTMLElement {
         }
     }
     updateQueueDisplay() {
+        // Update the queue in the queue component
         const queueComponent = this.shadowRoot.querySelector('queue-component');
         if (queueComponent) {
-            queueComponent.queue = this.queue;
+            queueComponent.queue = this._queue;
         }
     }
 

@@ -18,6 +18,7 @@ class Lecteur extends HTMLElement {
             this.currentMusic = this._queue[0]; // Initialize currentMusic with the first song in the queue
             this.render();
         }
+        this.setupEventListeners();
     }
     get currentMusic() {
         return this._currentMusic;
@@ -31,8 +32,12 @@ class Lecteur extends HTMLElement {
     }
     set queue(newQueue) {
         this._queue = newQueue;
-        if (this._queue.length > 0) {
-            this.currentMusic = this._queue[0]; // Set the current music to the first item of the new queue
+        // If the current music is not in the new queue, play the first song of the new queue
+        if (!this._queue.includes(this.currentMusic)) {
+            this.currentMusic = this._queue[0] || null;
+            if (this.currentMusic) {
+                this.playMusic();
+            }
         }
     }
     render() {
@@ -195,25 +200,19 @@ class Lecteur extends HTMLElement {
         }
     }
     nextMusic() {
-        const currentIndex = this.queue[0];
-        // Assuming 'queue' and 'playList' are managed by MyAudioPlayer
-        // This is an example and needs to be adapted based on how you manage the queue
-        const nextIndex = (this.queue.indexOf(this.currentMusic) + 1) % this.queue.length;
-        const nextSong = this.queue[nextIndex];
-        this.loadMusic(nextSong);
-        if (this.isPlaying) {
-            this.playMusic();
-        }
+        const currentIndex = this._queue.findIndex(music => music === this._currentMusic);
+        const nextIndex = (currentIndex + 1) % this._queue.length;
+        const nextSong = this._queue[nextIndex];
+        this.currentMusic = nextSong; // Update the current music with the next song
+        this.playMusic();
     }
+
     prevMusic() {
-        // Similar to nextMusic, but going backwards
-        const currentIndex = this.queue.indexOf(this.currentMusic);
-        const prevIndex = (currentIndex - 1 + this.queue.length) % this.queue.length;
-        const prevSong = this.queue[prevIndex];
-        this.loadMusic(prevSong);
-        if (this.isPlaying) {
-            this.playMusic();
-        }
+        const currentIndex = this._queue.findIndex(music => music === this._currentMusic);
+        const prevIndex = (currentIndex - 1 + this._queue.length) % this._queue.length;
+        const prevSong = this._queue[prevIndex];
+        this.currentMusic = prevSong; // Update the current music with the previous song
+        this.playMusic();
     }
     loadMusic(musicInfo) {
         // Ensure 'musicInfo' contains the properties you're trying to access
@@ -265,12 +264,27 @@ class Lecteur extends HTMLElement {
         // Additional event listeners for the audio element and progress bar
         const audio = this.shadowRoot.querySelector('audio');
         audio.addEventListener('timeupdate', () => this.updateProgress());
+        audio.addEventListener('ended', () => {
+            this.removeCurrentSongFromQueue();
+            this.nextMusic();
+        });
 
         const progressBarContainer = this.shadowRoot.querySelector('.music-progress');
         progressBarContainer.addEventListener('click', (e) => this.setProgress(e));
 
         const progressZone = this.shadowRoot.querySelector('.music-progress');
         progressZone.addEventListener('click', (e) => this.setProgress(e));
+    }
+
+    removeCurrentSongFromQueue() {
+        const currentSongIndex = this._queue.findIndex(song => song === this._currentMusic);
+        if (currentSongIndex !== -1) {
+            // Remove the current song from the queue
+            this._queue.splice(currentSongIndex, 1);
+
+            // Inform the parent component to update its queue as well
+            this.dispatchEvent(new CustomEvent('songEnded', { detail: { index: currentSongIndex } }));
+        }
     }
 }
 

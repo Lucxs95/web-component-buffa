@@ -50,7 +50,21 @@ class Queue extends HTMLElement {
     }
 
     setupEventListeners() {
+        this.shadowRoot.addEventListener('click', (event) => {
+            // Check if the fa-minus icon inside the queue__song-add button was clicked
+            if (event.target.classList.contains('fa-minus')) {
+                // Find the closest parent .queue__song div to get its data-song-index attribute
+                const songElement = event.target.closest('.queue__song');
+                const songIndex = parseInt(songElement.getAttribute('data-song-index'));
 
+                // Dispatch a custom event with the index of the song to be removed
+                this.dispatchEvent(new CustomEvent('removeSongFromQueue', {
+                    detail: { index: songIndex },
+                    bubbles: true,
+                    composed: true // Ensures the event bubbles up through the shadow DOM boundary
+                }));
+            }
+        });
     }
 
 }
