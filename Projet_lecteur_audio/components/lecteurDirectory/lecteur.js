@@ -13,7 +13,6 @@ class Lecteur extends HTMLElement {
     }
 
     connectedCallback() {
-        console.log(this._queue);
         if (this._queue.length > 0) {
             this.currentMusic = this._queue[0]; // Initialize currentMusic with the first song in the queue
             this.render();
@@ -197,9 +196,19 @@ class Lecteur extends HTMLElement {
     playMusic() {
         const audio = this.shadowRoot.querySelector('audio');
         if (audio) {
-            audio.play();
-            this.isPlaying = true;
-            this.updatePlayButtonIcon();
+            // Attempt to play and handle the promise
+            const playPromise = audio.play();
+
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    // Audio is playing
+                    this.isPlaying = true;
+                    this.updatePlayButtonIcon();
+                }).catch(error => {
+                    console.error('Error while trying to play audio:', error);
+                    // Handle error (for example, showing a message to the user)
+                });
+            }
         }
     }
 
@@ -311,7 +320,13 @@ class Lecteur extends HTMLElement {
 
             // Bind the context to this class for each event listener
             const playButton = this.shadowRoot.querySelector('#play');
-            playButton.addEventListener('click', () => this.isPlaying ? this.pauseMusic() : this.playMusic());
+            playButton.addEventListener('click', () => {
+                if (this.isPlaying) {
+                    this.pauseMusic();
+                } else {
+                    this.playMusic();
+                }
+            });
 
             const nextButton = this.shadowRoot.querySelector('#next');
             nextButton.addEventListener('click', () => this.nextMusic());
@@ -335,6 +350,11 @@ class Lecteur extends HTMLElement {
             audio.addEventListener('ended', () => {
                 this.removeCurrentSongFromQueue();
                 this.nextMusic();
+                this.dispatchEvent(new CustomEvent('songEnded', {
+                    detail: { currentSong: this._currentMusic },
+                    bubbles: true,
+                    composed: true
+                }));
             });
 
             const progressBarContainer = this.shadowRoot.querySelector('.music-progress');

@@ -113,7 +113,7 @@ class MyAudioPlayer extends HTMLElement {
 
     addToQueue(song) {
         const songExists = this._playList.find(s => s === song);
-        if (songExists && !this._queue.includes(song)) {
+        if (songExists ) {
             this._queue.push(song);
             this.updateQueueDisplay();
             this.updateLecteurQueue(); // Update the Lecteur component whenever the queue is changed.
