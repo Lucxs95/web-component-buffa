@@ -307,38 +307,42 @@ class Lecteur extends HTMLElement {
     }
 
     setupEventListeners() {
-        // Bind the context to this class for each event listener
-        const playButton = this.shadowRoot.querySelector('#play');
-        playButton.addEventListener('click', () => this.isPlaying ? this.pauseMusic() : this.playMusic());
+        if (this.currentMusic) {
 
-        const nextButton = this.shadowRoot.querySelector('#next');
-        nextButton.addEventListener('click', () => this.nextMusic());
+            // Bind the context to this class for each event listener
+            const playButton = this.shadowRoot.querySelector('#play');
+            playButton.addEventListener('click', () => this.isPlaying ? this.pauseMusic() : this.playMusic());
 
-        const prevButton = this.shadowRoot.querySelector('#prev');
-        prevButton.addEventListener('click', () => this.prevMusic());
+            const nextButton = this.shadowRoot.querySelector('#next');
+            nextButton.addEventListener('click', () => this.nextMusic());
 
-        const volumeSlider = this.shadowRoot.querySelector('#volumeSlider');
-        volumeSlider.addEventListener('input', () => this.updateVolume());
+            const prevButton = this.shadowRoot.querySelector('#prev');
+            prevButton.addEventListener('click', () => this.prevMusic());
 
-        const shuffleButton = this.shadowRoot.querySelector('#shuffle');
-        shuffleButton.addEventListener('click', () => this.toggleShuffle());
+            const volumeSlider = this.shadowRoot.querySelector('#volumeSlider');
+            volumeSlider.addEventListener('input', () => this.updateVolume());
 
-        const loopButton = this.shadowRoot.querySelector('#loop');
-        loopButton.addEventListener('click', () => this.toggleLoop());
+            const shuffleButton = this.shadowRoot.querySelector('#shuffle');
+            shuffleButton.addEventListener('click', () => this.toggleShuffle());
 
-        // Additional event listeners for the audio element and progress bar
-        const audio = this.shadowRoot.querySelector('audio');
-        audio.addEventListener('timeupdate', () => this.updateProgress());
-        audio.addEventListener('ended', () => {
-            this.removeCurrentSongFromQueue();
-            this.nextMusic();
-        });
+            const loopButton = this.shadowRoot.querySelector('#loop');
+            loopButton.addEventListener('click', () => this.toggleLoop());
 
-        const progressBarContainer = this.shadowRoot.querySelector('.music-progress');
-        progressBarContainer.addEventListener('click', (e) => this.setProgress(e));
 
-        const progressZone = this.shadowRoot.querySelector('.music-progress');
-        progressZone.addEventListener('click', (e) => this.setProgress(e));
+            // Additional event listeners for the audio element and progress bar
+            const audio = this.shadowRoot.querySelector('audio');
+            audio.addEventListener('timeupdate', () => this.updateProgress());
+            audio.addEventListener('ended', () => {
+                this.removeCurrentSongFromQueue();
+                this.nextMusic();
+            });
+
+            const progressBarContainer = this.shadowRoot.querySelector('.music-progress');
+            progressBarContainer.addEventListener('click', (e) => this.setProgress(e));
+
+            const progressZone = this.shadowRoot.querySelector('.music-progress');
+            progressZone.addEventListener('click', (e) => this.setProgress(e));
+        }
     }
 
     removeCurrentSongFromQueue() {
