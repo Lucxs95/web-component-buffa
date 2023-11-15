@@ -46,16 +46,19 @@ class Playlist extends HTMLElement {
     }
     setupEventListeners() {
         this.shadowRoot.addEventListener('click', (e) => {
-            if (e.target.classList.contains('playlist__song-add')) {
-                const songIndex = e.target.parentElement.getAttribute('data-song-index');
+            const songAddButton = e.target.closest('.playlist__song-add');
+
+            if (songAddButton) {
+                const songIndex = songAddButton.parentElement.getAttribute('data-song-index');
                 this.dispatchEvent(new CustomEvent('addSongToQueue', {
-                    detail: { index: parseInt(songIndex) },
+                    detail: { index: parseInt(songIndex, 10) },
                     bubbles: true,
                     composed: true
                 }));
             }
         });
     }
+
 
 }
 
