@@ -1,5 +1,4 @@
 import stylesQueue from './stylesQueue.js';
-import playList from '../../assets/data.js';
 class Queue extends HTMLElement {
     constructor() {
         super();
