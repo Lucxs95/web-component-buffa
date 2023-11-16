@@ -10,6 +10,18 @@ class Lecteur extends HTMLElement {
         this.isShuffled = false;
         this.isLooping = false;
         this._queue = []; // Queue will be set by parent
+        this.audioContext = new AudioContext();
+        this.gainNode = this.audioContext.createGain();
+        this.pannerNode = this.audioContext.createStereoPanner();
+        this.biquadFilter = this.audioContext.createBiquadFilter();
+        this.audioElement = new Audio();
+        this.audioSrc = this.audioContext.createMediaElementSource(this.audioElement);
+
+        // Connect nodes
+        this.audioSrc.connect(this.gainNode)
+            .connect(this.pannerNode)
+            .connect(this.biquadFilter)
+            .connect(this.audioContext.destination);
     }
 
     connectedCallback() {
@@ -91,7 +103,6 @@ class Lecteur extends HTMLElement {
                     </div>
                 </div>
             `;
-
             // Setup event listeners after rendering new elements
             this.setupEventListeners();
         } else {
@@ -140,13 +151,17 @@ class Lecteur extends HTMLElement {
                 </div>
             `;
         }
+        if (this.currentMusic) {
+            this.audioElement.src = this.currentMusic.musicPath;
+            this.audioElement.load();
+        }
+
 
     }
 
     updateVolume() {
-        const music = this.shadowRoot.querySelector('audio');
         const volumeSlider = this.shadowRoot.querySelector('#volumeSlider');
-        music.volume = volumeSlider.value;
+        this.gainNode.gain.value = volumeSlider.value;
     }
 
     toggleShuffle() {
@@ -189,36 +204,25 @@ class Lecteur extends HTMLElement {
         loopIcon.classList.toggle('active', this.isLooping);
 
         // Set the audio element's loop property accordingly
-        const audio = this.shadowRoot.querySelector('audio');
-        audio.loop = this.isLooping; // This will cause the audio to loop the current track
+
+        this.audioElement.loop = this.isLooping; // This will cause the audio to loop the current track
     }
 
     playMusic() {
-        const audio = this.shadowRoot.querySelector('audio');
-        if (audio) {
-            // Attempt to play and handle the promise
-            const playPromise = audio.play();
-
-            if (playPromise !== undefined) {
-                playPromise.then(() => {
-                    // Audio is playing
-                    this.isPlaying = true;
-                    this.updatePlayButtonIcon();
-                }).catch(error => {
-                    console.error('Error while trying to play audio:', error);
-                    // Handle error (for example, showing a message to the user)
-                });
-            }
+        if (this.audioContext.state === 'suspended') {
+            this.audioContext.resume();
         }
+        this.audioElement.play()
+            .then(() => {
+                this.isPlaying = true;
+                this.updatePlayButtonIcon();
+            })
     }
 
     pauseMusic() {
-        const audio = this.shadowRoot.querySelector('audio');
-        if (audio) {
-            audio.pause();
-            this.isPlaying = false;
-            this.updatePlayButtonIcon();
-        }
+        this.audioElement.pause();
+        this.isPlaying = false;
+        this.updatePlayButtonIcon();
     }
 
     updatePlayButtonIcon() {
@@ -233,40 +237,37 @@ class Lecteur extends HTMLElement {
     }
 
     updateProgress() {
-        const audio = this.shadowRoot.querySelector('audio');
         const progressBar = this.shadowRoot.querySelector('#progress-bar');
         const currentTimeDisplay = this.shadowRoot.querySelector('.music-current-time');
         const durationTimeDisplay = this.shadowRoot.querySelector('.music-duration-time');
 
-        if (audio.duration) {
-            const progressPercent = (audio.currentTime / audio.duration) * 100;
+        if (this.audioElement.duration) {
+            const progressPercent = (this.audioElement.currentTime / this.audioElement.duration) * 100;
             progressBar.style.width = `${progressPercent}%`;
 
-            currentTimeDisplay.textContent = this.formatTime(audio.currentTime);
-            durationTimeDisplay.textContent = this.formatTime(audio.duration);
+            currentTimeDisplay.textContent = this.formatTime(this.audioElement.currentTime);
+            durationTimeDisplay.textContent = this.formatTime(this.audioElement.duration);
         }
     }
 
     setMusicTime() {
-        const audio = this.shadowRoot.querySelector('audio');
         const currentTimeDisplay = this.shadowRoot.querySelector('.music-current-time');
         const durationTimeDisplay = this.shadowRoot.querySelector('.music-duration-time');
 
-        if (audio.currentTime && audio.duration) {
-            currentTimeDisplay.textContent = this.formatTime(audio.currentTime);
-            durationTimeDisplay.textContent = this.formatTime(audio.duration);
+        if (this.audioElement.currentTime && this.audioElement.duration) {
+            currentTimeDisplay.textContent = this.formatTime(this.audioElement.currentTime);
+            durationTimeDisplay.textContent = this.formatTime(this.audioElement.duration);
         }
     }
 
     setProgress(e) {
-        const audio = this.shadowRoot.querySelector('audio');
         const progressZone = this.shadowRoot.querySelector('.music-progress');
 
-        if (e.offsetX && progressZone.clientWidth && audio.duration) {
+        if (e.offsetX && progressZone.clientWidth && this.audioElement.duration) {
             const clickX = e.offsetX;
             const width = progressZone.clientWidth;
             const fraction = clickX / width;
-            audio.currentTime = fraction * audio.duration;
+            this.audioElement.currentTime = fraction * this.audioElement.duration;
         }
     }
 
@@ -288,7 +289,7 @@ class Lecteur extends HTMLElement {
 
     loadMusic(musicInfo) {
         // Ensure 'musicInfo' contains the properties you're trying to access
-        const music = this.shadowRoot.querySelector('audio');
+        const music = this.audioElement;
         const musicImage = this.shadowRoot.querySelector('.music-image');
         const musicName = this.shadowRoot.querySelector('.music-name');
         const musicArtist = this.shadowRoot.querySelector('.music-artist');
@@ -335,8 +336,9 @@ class Lecteur extends HTMLElement {
             prevButton.addEventListener('click', () => this.prevMusic());
 
             const volumeSlider = this.shadowRoot.querySelector('#volumeSlider');
-            volumeSlider.addEventListener('input', () => this.updateVolume());
-
+            if (volumeSlider) {
+                volumeSlider.addEventListener('input', () => this.updateVolume());
+            }
             const shuffleButton = this.shadowRoot.querySelector('#shuffle');
             shuffleButton.addEventListener('click', () => this.toggleShuffle());
 
@@ -345,16 +347,10 @@ class Lecteur extends HTMLElement {
 
 
             // Additional event listeners for the audio element and progress bar
-            const audio = this.shadowRoot.querySelector('audio');
-            audio.addEventListener('timeupdate', () => this.updateProgress());
-            audio.addEventListener('ended', () => {
+            this.audioElement.addEventListener('timeupdate', () => this.updateProgress());
+            this.audioElement.addEventListener('ended', () => {
                 this.removeCurrentSongFromQueue();
                 this.nextMusic();
-                this.dispatchEvent(new CustomEvent('songEnded', {
-                    detail: { currentSong: this._currentMusic },
-                    bubbles: true,
-                    composed: true
-                }));
             });
 
             const progressBarContainer = this.shadowRoot.querySelector('.music-progress');
