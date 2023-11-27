@@ -37,15 +37,10 @@ const styles = `
     width: 100vw;
     background-color: rgba(31, 31, 31, .8);
     height: 100vh;
-    backdrop-filter: blur(20px);
+    backdrop-filter: blur(0px);
     z-index: 11;
 }
 
-    .section__background-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
 
 .mixTable-wrapper {
     grid-column: span 2;  /* Position in the second column */
