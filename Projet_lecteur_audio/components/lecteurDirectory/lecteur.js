@@ -19,8 +19,6 @@ class Lecteur extends HTMLElement {
 
         // Connect nodes
         this.audioSrc.connect(this.gainNode)
-            .connect(this.pannerNode)
-            .connect(this.biquadFilter)
             .connect(this.audioContext.destination);
     }
 
@@ -39,6 +37,13 @@ class Lecteur extends HTMLElement {
     set currentMusic(music) {
         this._currentMusic = music;
         this.render();
+
+        // Dispatch an event with the audio source
+        this.dispatchEvent(new CustomEvent('audioSourceChanged', {
+            detail: { audioSrc: this.audioSrc },
+            bubbles: true, // To let the event bubble up through the DOM
+            composed: true // To let the event cross the shadow DOM boundary
+        }));
     }
 
     get queue() {
