@@ -25,11 +25,15 @@ class MyAudioPlayer extends HTMLElement {
         return this._queue;
     }
 
+
+
     connectedCallback() {
         this.render();
         const playlistComponent = this.shadowRoot.querySelector('playlist-component');
         const queueComponent = this.shadowRoot.querySelector('queue-component');
         const lecteurComponent = this.shadowRoot.querySelector('lecteur-component');
+        const mixTableComponent = this.shadowRoot.querySelector('mixtable-component');
+
         if (playlistComponent) {
             playlistComponent.playlist = this._playList;
         }
@@ -39,8 +43,29 @@ class MyAudioPlayer extends HTMLElement {
         if (lecteurComponent) {
             lecteurComponent.queue = this._queue; // Pass the updated queue to the Lecteur component
         }
+
+
+
+        if (mixTableComponent) {
+            mixTableComponent.addEventListener('reverbChanged', (e) => {
+                const { reverbValue } = e.detail;
+                const lecteurComponent = this.shadowRoot.querySelector('lecteur-component');
+                if (lecteurComponent) {
+                    lecteurComponent.dispatchEvent(new CustomEvent('updateReverb', { detail: { reverbValue } }));
+                }
+            });
+        }
+
         this.updateLecteurQueue();
         this.setupEventListeners();
+    }
+
+    updateReverb(value) {
+        // Mettre à jour la reverb de l'audio avec la valeur donnée
+        // this.convolverNode.gain.value = value;
+        console.log(value)
+        this.dispatchEvent(new CustomEvent('reverbUpdate', { detail: { value } }));
+
     }
 
     render() {
@@ -79,6 +104,10 @@ class MyAudioPlayer extends HTMLElement {
         });
         this.shadowRoot.addEventListener('removeSongFromQueue', (e) => {
             this.removeFromQueue(e.detail.index);
+        });
+
+        this.shadowRoot.addEventListener('reverb', () => {
+            this.isPlaying = true;
         });
 
     }
@@ -121,6 +150,7 @@ class MyAudioPlayer extends HTMLElement {
             console.error('Song does not exist in the playlist');
         }
     }
+
     updateQueueDisplay() {
         // Update the queue in the queue component
         const queueComponent = this.shadowRoot.querySelector('queue-component');

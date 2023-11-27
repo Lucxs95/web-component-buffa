@@ -17,12 +17,17 @@ class Lecteur extends HTMLElement {
         this.audioElement = new Audio();
         this.audioSrc = this.audioContext.createMediaElementSource(this.audioElement);
 
+
         // Connect nodes
         this.audioSrc.connect(this.gainNode)
-            .connect(this.pannerNode)
-            .connect(this.biquadFilter)
-            .connect(this.audioContext.destination);
+
+            // .connect(this.pannerNode)
+            // .connect(this.biquadFilter)
+            .connect(this.audioContext.destination)
+
+            ;
     }
+
 
     connectedCallback() {
         if (this._queue.length > 0) {
@@ -30,6 +35,8 @@ class Lecteur extends HTMLElement {
             this.render();
         }
         this.setupEventListeners();
+
+ 
     }
 
     get currentMusic() {
@@ -158,11 +165,14 @@ class Lecteur extends HTMLElement {
 
 
     }
+    
 
     updateVolume() {
         const volumeSlider = this.shadowRoot.querySelector('#volumeSlider');
         this.gainNode.gain.value = volumeSlider.value;
     }
+
+
 
     toggleShuffle() {
         const shuffleButton = this.shadowRoot.querySelector('#shuffle');
@@ -339,6 +349,15 @@ class Lecteur extends HTMLElement {
             if (volumeSlider) {
                 volumeSlider.addEventListener('input', () => this.updateVolume());
             }
+
+            this.addEventListener('updateReverb', (e) => {
+                const { reverbValue } = e.detail;
+                // Mettre à jour la reverb de l'audio avec la valeur donnée
+                console.log("dans le lecteur valeur : " + reverbValue)
+                //this.updateReverb(reverbValue);
+            });
+            
+
             const shuffleButton = this.shadowRoot.querySelector('#shuffle');
             shuffleButton.addEventListener('click', () => this.toggleShuffle());
 

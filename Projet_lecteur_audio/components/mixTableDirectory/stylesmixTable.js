@@ -10,7 +10,7 @@ const styles = `
     body {
     background-color: rgb(31, 31, 31);
     overflow: hidden;
-}
+    }
 `;
 
 export default styles;
