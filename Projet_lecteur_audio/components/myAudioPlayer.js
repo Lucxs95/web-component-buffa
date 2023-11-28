@@ -80,7 +80,22 @@ class MyAudioPlayer extends HTMLElement {
         this.shadowRoot.addEventListener('removeSongFromQueue', (e) => {
             this.removeFromQueue(e.detail.index);
         });
+        this.shadowRoot.addEventListener('playSongAndAddRestToQueue', (e) => {
+            const { startIndex } = e.detail;
+            this.playSongAndAddRestToQueue(startIndex);
+        });
+    }
 
+    playSongAndAddRestToQueue(startIndex) {
+        this._queue = this._playList.slice(startIndex);
+        this.updateQueueDisplay();
+        this.updateLecteurQueue();
+
+        const lecteurComponent = this.shadowRoot.querySelector('lecteur-component');
+        if (lecteurComponent && this._queue.length > 0) {
+            lecteurComponent.currentMusic = this._queue[0];
+            lecteurComponent.playMusic();
+        }
     }
     updateLecteurQueue() {
         const lecteurComponent = this.shadowRoot.querySelector('lecteur-component');

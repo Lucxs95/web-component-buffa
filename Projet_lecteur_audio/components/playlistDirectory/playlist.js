@@ -62,6 +62,19 @@ class Playlist extends HTMLElement {
                 }));
             }
         });
+        this.shadowRoot.addEventListener('click', (e) => {
+            const songPlayButton = e.target.closest('.playlist__song-play');
+
+            if (songPlayButton) {
+                const songIndex = parseInt(songPlayButton.parentElement.getAttribute('data-song-index'), 10);
+                // Envoyer un événement avec l'index de la chanson et un indicateur pour ajouter toutes les chansons suivantes
+                this.dispatchEvent(new CustomEvent('playSongAndAddRestToQueue', {
+                    detail: { startIndex: songIndex },
+                    bubbles: true,
+                    composed: true
+                }));
+            }
+        });
     }
 
 
