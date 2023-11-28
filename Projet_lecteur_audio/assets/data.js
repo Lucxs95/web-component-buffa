@@ -22,7 +22,13 @@ const playList = [
     cover: 'https://yildirimzlm.s3.us-east-2.amazonaws.com/montero.jpeg',
     musicName: 'MONTERO (Call Me By Your Name)',
     musicPath: `./assets/music/montero.mp3`
-}
+},
+    {
+        artist: 'Inconnu',
+        cover: 'https://t3.ftcdn.net/jpg/05/73/18/48/360_F_573184832_NS903JNajM6ixoXd1YriDKKHaChKdk3g.jpg',
+        musicName: 'Deep Test',
+        musicPath: `./assets/music/deep.mp3`
+    }
 ]
 
 export default playList;
