@@ -1,5 +1,5 @@
-import './libs/butterchurn/lib/butterchurn.js';
-import './libs/butterchurn-presets/lib/butterchurnPresets.min.js';
+// import './libs/butterchurn/lib/butterchurn.js';
+// import './libs/butterchurn-presets/lib/butterchurnPresets.min.js';
 
 class Visualizer extends HTMLElement {
     constructor() {
@@ -29,12 +29,11 @@ class Visualizer extends HTMLElement {
         <style>
             #visualizerCanvas {
                 position: absolute;
-                left: 0;
+
                 right: 0;
                 bottom: 0;
-                height: 630px;
-                z-index: -1;
-                opacity: 0.3;
+                height: 150px;
+
             }
         </style>
         <canvas id="visualizerCanvas"></canvas>

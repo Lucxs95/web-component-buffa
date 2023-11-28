@@ -5,6 +5,7 @@ import './playlistDirectory/playlist.js';
 import './queueDirectory/queue.js';
 import './mixTableDirectory/mixTable.js';
 import './visualizerDirectory/visualizer.js';
+import './tripDirectory/trip.js';
 
 class MyAudioPlayer extends HTMLElement {
     constructor() {
@@ -53,9 +54,8 @@ class MyAudioPlayer extends HTMLElement {
             <script type="module" src="visualizerDirectory/visualizer.js"></script>
             <style>${styles}</style>
              <div class="section">
-                <div class="section__background">
-                    <img id="backgroundImage" class="section__background-image" src="" alt="">
-                </div>
+                <trip-component class="section__background"></trip-component>
+
 
                 <playlist-component></playlist-component>
                 <lecteur-component></lecteur-component>
