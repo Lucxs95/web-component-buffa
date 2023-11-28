@@ -1,20 +1,28 @@
-import '../../../node_modules/butterchurn/lib/butterchurn.min.js';
-import '../../../node_modules/butterchurn-presets/lib/butterchurnPresets.min.js';
+import 'https://cdn.jsdelivr.net/npm/butterchurn@2.6.7/lib/butterchurn.min.js';
+import 'https://cdn.jsdelivr.net/npm/butterchurn-presets@2.4.7/lib/butterchurnPresets.min.js';
 class Trip extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
         console.log("Trip constructed");
-
-        // Initial state
+        this.presets = butterchurnPresets.getPresets(); // Load presets here
         this.visualizer = null;
         this.presetIndex = 0;
     }
 
     connectedCallback() {
         this.render();
+        this.setupEventListeners();
         document.addEventListener('audioSourceChanged', this.handleAudioSourceChange.bind(this));
+        document.addEventListener('presetSelected', this.handlePresetSelected.bind(this));
         console.log("Trip connected");
+    }
+
+    handlePresetSelected(event) {
+        const { presetKey } = event.detail;
+        if (this.visualizer && presetKey) {
+            this.visualizer.loadPreset(this.presets[presetKey], 0);
+        }
     }
 
     handleAudioSourceChange(event) {
@@ -33,8 +41,18 @@ class Trip extends HTMLElement {
         // Load a preset
         const presets = butterchurnPresets.getPresets();
         const presetKeys = Object.keys(presets);
+
+        // Randomly select a preset
         this.presetIndex = Math.floor(Math.random() * presetKeys.length);
-        this.visualizer.loadPreset(presets[presetKeys[this.presetIndex]], 0);
+        const randomPresetKey = presetKeys[this.presetIndex];
+        this.visualizer.loadPreset(presets[randomPresetKey], 0);
+
+        // Dispatch an event to notify the Visualizer about the random selection
+        this.dispatchEvent(new CustomEvent('presetSelected', {
+            detail: { presetKey: randomPresetKey },
+            bubbles: true,
+            composed: true
+        }));
 
         // Start rendering
         this.startRendering();

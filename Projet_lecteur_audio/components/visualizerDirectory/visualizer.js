@@ -1,22 +1,39 @@
-// import './libs/butterchurn/lib/butterchurn.js';
-// import './libs/butterchurn-presets/lib/butterchurnPresets.min.js';
-
 class Visualizer extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({mode: 'open'});
-        console.log("Visualizer constructed");
+        this.presets = []; // Presets
+        this.activePresetKey = null; // Track the active preset key
     }
 
     connectedCallback() {
+        this.loadPresets();
         this.render();
         this.setupEventListeners();
         document.addEventListener('audioSourceChanged', this.handleAudioSourceChange.bind(this));
         console.log("Visualizer connected");
     }
 
+    loadPresets() {
+        this.presets = butterchurnPresets.getPresets(); // Load presets here
+    }
+
+    generatePresetList() {
+        return Object.keys(this.presets).map((presetKey, index) => {
+            const isActive = presetKey === this.activePresetKey;
+            return `
+            <div class="playlist__song${isActive ? ' active' : ''}" data-preset-index="${index}">
+                <div class="playlist__song-info">
+                    <span class="playlist__song-title">${presetKey}</span>
+                </div>
+            </div>
+        `;
+        }).join('');
+    }
+
+
     handleAudioSourceChange(event) {
-        const { audioSrc } = event.detail;
+        const {audioSrc} = event.detail;
         this.analyser = audioSrc.context.createAnalyser();
         this.analyser.fftSize = 2048;
         audioSrc.connect(this.analyser);
@@ -25,6 +42,8 @@ class Visualizer extends HTMLElement {
     }
 
     render() {
+        const presetList = this.generatePresetList();
+
         this.shadowRoot.innerHTML = `
         <style>
             #visualizerCanvas {
@@ -35,13 +54,65 @@ class Visualizer extends HTMLElement {
                 height: 150px;
 
             }
+            .preset-list {
+                    position: relative; /* Add this line if not already present */
+                    overflow-y: auto; 
+                    height: 150px;  
+                    scrollbar-width: none; /* For Firefox */
+                    scrollbar-color: rgba(255, 255, 255, 0.4) rgba(255, 255, 255, 0.1);
+                }
+            .preset-list::-webkit-scrollbar {
+                display: none;
+            }
+            .playlist__song {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: rgba(31, 31, 31, 0.7);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+            .playlist__song-info {
+                flex-grow: 1;
+            }
+            .playlist__song-title {
+                display: block;
+                color: rgba(255, 255, 255, 0.8);
+                margin-bottom: 5px;
+                text-transform: capitalize; 
+            }
+            .playlist__song.active {
+            background-color: rgb(108,108,108); /* Or any other style to highlight */
+        }
         </style>
         <canvas id="visualizerCanvas"></canvas>
-    `;
+        <div class="preset-list">${presetList}</div>    `;
 
         this.canvas = this.shadowRoot.querySelector('#visualizerCanvas');
         this.canvasContext = this.canvas.getContext('2d');
         this.resizeCanvas();
+        this.scrollToActivePreset();
+
+    }
+
+    scrollToActivePreset() {
+        const activePresetElement = this.shadowRoot.querySelector('.playlist__song.active');
+        const presetListContainer = this.shadowRoot.querySelector('.preset-list');
+
+        if (activePresetElement && presetListContainer) {
+            // Calculate the position of the active element relative to the container
+            const elementTop = activePresetElement.offsetTop;
+            const elementHeight = activePresetElement.offsetHeight;
+            const containerHeight = presetListContainer.offsetHeight;
+
+            // Scroll position to center the element in the container
+            const scrollPosition = elementTop + elementHeight / 2 - containerHeight / 2;
+
+            // Update the scrollTop of the container
+            presetListContainer.scrollTop = scrollPosition;
+        }
     }
 
     resizeCanvas() {
@@ -71,7 +142,37 @@ class Visualizer extends HTMLElement {
     }
 
     setupEventListeners() {
+        this.shadowRoot.addEventListener('click', this.handlePresetClick.bind(this));
         window.addEventListener('resize', this.resizeCanvas.bind(this));
+        document.addEventListener('presetSelected', this.handlePresetSelected.bind(this));
+
+    }
+
+    handlePresetClick(event) {
+        const presetItem = event.target.closest('.playlist__song');
+        if (presetItem) {
+            const presetIndex = parseInt(presetItem.getAttribute('data-preset-index'), 10);
+            this.activePresetKey = Object.keys(this.presets)[presetIndex]; // Update active preset key
+            console.log(this.activePresetKey);
+            this.dispatchEvent(new CustomEvent('presetSelected', {
+                detail: { presetKey: this.activePresetKey },
+                bubbles: true,
+                composed: true
+            }));
+            this.render(); // Re-render to update the visual indication
+            this.scrollToActivePreset(); // Scroll to the selected preset
+
+        }
+    }
+
+    handlePresetSelected(event) {
+        const { presetKey } = event.detail;
+        if (presetKey) {
+            this.activePresetKey = presetKey;
+            this.render(); // Re-render to update the visual indication
+            this.scrollToActivePreset(); // Scroll to the selected preset
+
+        }
     }
 
     disconnectedCallback() {
