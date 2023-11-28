@@ -58,9 +58,12 @@ class Visualizer extends HTMLElement {
                     position: relative; /* Add this line if not already present */
                     overflow-y: auto; 
                     height: 150px;  
-                    scrollbar-width: thin;
+                    scrollbar-width: none; /* For Firefox */
                     scrollbar-color: rgba(255, 255, 255, 0.4) rgba(255, 255, 255, 0.1);
                 }
+            .preset-list::-webkit-scrollbar {
+                display: none;
+            }
             .playlist__song {
             display: flex;
             align-items: center;
@@ -78,6 +81,7 @@ class Visualizer extends HTMLElement {
                 display: block;
                 color: rgba(255, 255, 255, 0.8);
                 margin-bottom: 5px;
+                text-transform: capitalize; 
             }
             .playlist__song.active {
             background-color: rgb(108,108,108); /* Or any other style to highlight */
