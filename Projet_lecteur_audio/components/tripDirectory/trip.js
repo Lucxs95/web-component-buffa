@@ -41,8 +41,18 @@ class Trip extends HTMLElement {
         // Load a preset
         const presets = butterchurnPresets.getPresets();
         const presetKeys = Object.keys(presets);
+
+        // Randomly select a preset
         this.presetIndex = Math.floor(Math.random() * presetKeys.length);
-        this.visualizer.loadPreset(presets[presetKeys[this.presetIndex]], 0);
+        const randomPresetKey = presetKeys[this.presetIndex];
+        this.visualizer.loadPreset(presets[randomPresetKey], 0);
+
+        // Dispatch an event to notify the Visualizer about the random selection
+        this.dispatchEvent(new CustomEvent('presetSelected', {
+            detail: { presetKey: randomPresetKey },
+            bubbles: true,
+            composed: true
+        }));
 
         // Start rendering
         this.startRendering();
