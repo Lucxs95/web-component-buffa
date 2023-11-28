@@ -5,16 +5,24 @@ class Trip extends HTMLElement {
         super();
         this.attachShadow({ mode: 'open' });
         console.log("Trip constructed");
-
-        // Initial state
+        this.presets = butterchurnPresets.getPresets(); // Load presets here
         this.visualizer = null;
         this.presetIndex = 0;
     }
 
     connectedCallback() {
         this.render();
+        this.setupEventListeners();
         document.addEventListener('audioSourceChanged', this.handleAudioSourceChange.bind(this));
+        document.addEventListener('presetSelected', this.handlePresetSelected.bind(this));
         console.log("Trip connected");
+    }
+
+    handlePresetSelected(event) {
+        const { presetKey } = event.detail;
+        if (this.visualizer && presetKey) {
+            this.visualizer.loadPreset(this.presets[presetKey], 0);
+        }
     }
 
     handleAudioSourceChange(event) {
