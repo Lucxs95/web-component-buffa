@@ -1,6 +1,3 @@
-// import './libs/butterchurn/lib/butterchurn.js';
-// import './libs/butterchurn-presets/lib/butterchurnPresets.min.js';
-
 class Visualizer extends HTMLElement {
     constructor() {
         super();

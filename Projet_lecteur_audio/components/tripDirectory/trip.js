@@ -1,5 +1,5 @@
-import '../../../node_modules/butterchurn/lib/butterchurn.min.js';
-import '../../../node_modules/butterchurn-presets/lib/butterchurnPresets.min.js';
+import 'https://cdn.jsdelivr.net/npm/butterchurn@2.6.7/lib/butterchurn.min.js';
+import 'https://cdn.jsdelivr.net/npm/butterchurn-presets@2.4.7/lib/butterchurnPresets.min.js';
 class Trip extends HTMLElement {
     constructor() {
         super();
