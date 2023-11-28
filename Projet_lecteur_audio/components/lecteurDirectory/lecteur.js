@@ -12,22 +12,6 @@ class Lecteur extends HTMLElement {
         this.isLooping = false;
         this._queue = []; // Queue will be set by parent
 
-
-        // this.gainNode = this.audioContext.createGain();
-        // this.pannerNode = this.audioContext.createStereoPanner();
-        // this.biquadFilter = this.audioContext.createBiquadFilter();
-        // this.audioElement = new Audio();
-        // this.audioSrc = this.audioContext.createMediaElementSource(this.audioElement);
-
-
-        // Connect nodes
-        // this.audioSrc.connect(this.gainNode)
-
-        // .connect(this.pannerNode)
-        // .connect(this.biquadFilter)
-        // .connect(this.audioContext.destination)
-
-
     }
 
 
@@ -37,9 +21,19 @@ class Lecteur extends HTMLElement {
             this.render();
         }
         this.setupEventListeners();
+    }
 
+    getInputNode() {
+        return this.inputGainNode;
+    }
 
+    getOutputNode() {
+        return this.outputGainNode;
+    }
 
+    SetAudioContext(newContext) {
+        this.audioContext = newContext;
+        this.buildGraph();
     }
 
     buildGraph() {
@@ -55,24 +49,6 @@ class Lecteur extends HTMLElement {
 
         this.audioSrc.connect(this.outputGainNode);
 
-
-        // .connect(this.audioContext.destination)
-    }
-
-    getInputNode() {
-        return this.inputGainNode;
-    }
-
-    getOutputNode() {
-        return this.outputGainNode;
-    }
-
-    SetAudioContext(newContext) {
-        console.log("audio context = ")
-        console.log(newContext)
-        this.audioContext = newContext;
-        this.buildGraph();
-
     }
 
     get currentMusic() {
@@ -82,13 +58,6 @@ class Lecteur extends HTMLElement {
     set currentMusic(music) {
         this._currentMusic = music;
         this.render();
-
-        // Dispatch an event with the audio source
-        this.dispatchEvent(new CustomEvent('audioSourceChanged', {
-            detail: { audioSrc: this.audioSrc },
-            bubbles: true, // To let the event bubble up through the DOM
-            composed: true // To let the event cross the shadow DOM boundary
-        }));
     }
 
     get queue() {

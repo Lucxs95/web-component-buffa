@@ -52,13 +52,13 @@ class MyAudioPlayer extends HTMLElement {
         let outputNode =  lecteurComponent.getOutputNode();
 
 
-
+        console.log(outputNode)
 
 
         if (mixTableComponent) {
 
+            mixTableComponent.SetAudioContext(this.audioContext, outputNode);
 
-            
 
 
             mixTableComponent.addEventListener('reverbChanged', (e) => {
@@ -70,10 +70,14 @@ class MyAudioPlayer extends HTMLElement {
             });
         }
 
+
+        let outputNode2 =  mixTableComponent.getOutputNode();
+console.log(outputNode2)
+
         this.updateLecteurQueue();
         this.setupEventListeners();
 
-        outputNode.connect(this.audioContext.destination);
+        outputNode2.connect(this.audioContext.destination);
 
     }
 
