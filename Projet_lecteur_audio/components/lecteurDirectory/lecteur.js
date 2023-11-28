@@ -1,31 +1,33 @@
 import stylesLecteur from './stylesLecteur.js';
 
 class Lecteur extends HTMLElement {
+
     constructor() {
         super();
-        this.attachShadow({mode: 'open'});
+        this.attachShadow({ mode: 'open' });
 
         // State properties
         this.isPlaying = false;
         this.isShuffled = false;
         this.isLooping = false;
         this._queue = []; // Queue will be set by parent
-        this.audioContext = new AudioContext();
-        this.gainNode = this.audioContext.createGain();
-        this.pannerNode = this.audioContext.createStereoPanner();
-        this.biquadFilter = this.audioContext.createBiquadFilter();
-        this.audioElement = new Audio();
-        this.audioSrc = this.audioContext.createMediaElementSource(this.audioElement);
+
+
+        // this.gainNode = this.audioContext.createGain();
+        // this.pannerNode = this.audioContext.createStereoPanner();
+        // this.biquadFilter = this.audioContext.createBiquadFilter();
+        // this.audioElement = new Audio();
+        // this.audioSrc = this.audioContext.createMediaElementSource(this.audioElement);
 
 
         // Connect nodes
-        this.audioSrc.connect(this.gainNode)
+        // this.audioSrc.connect(this.gainNode)
 
-            // .connect(this.pannerNode)
-            // .connect(this.biquadFilter)
-            .connect(this.audioContext.destination)
+        // .connect(this.pannerNode)
+        // .connect(this.biquadFilter)
+        // .connect(this.audioContext.destination)
 
-            ;
+
     }
 
 
@@ -36,7 +38,41 @@ class Lecteur extends HTMLElement {
         }
         this.setupEventListeners();
 
- 
+
+
+    }
+
+    buildGraph() {
+        this.inputGainNode = this.audioContext.createGain();
+        this.outputGainNode = this.audioContext.createGain();
+
+        this.audioElement = new Audio();
+        this.audioSrc = this.audioContext.createMediaElementSource(this.audioElement);
+
+        // Connect nodes
+        // on connecte inputGain au noeud du lecteur
+        // this.inputGainNode.connect(this.audioSrc);
+
+        this.audioSrc.connect(this.outputGainNode);
+
+
+        // .connect(this.audioContext.destination)
+    }
+
+    getInputNode() {
+        return this.inputGainNode;
+    }
+
+    getOutputNode() {
+        return this.outputGainNode;
+    }
+
+    SetAudioContext(newContext) {
+        console.log("audio context = ")
+        console.log(newContext)
+        this.audioContext = newContext;
+        this.buildGraph();
+
     }
 
     get currentMusic() {
@@ -165,11 +201,11 @@ class Lecteur extends HTMLElement {
 
 
     }
-    
+
 
     updateVolume() {
         const volumeSlider = this.shadowRoot.querySelector('#volumeSlider');
-        this.gainNode.gain.value = volumeSlider.value;
+        this.outputGainNode.gain.value = volumeSlider.value;
     }
 
 
@@ -356,7 +392,7 @@ class Lecteur extends HTMLElement {
                 console.log("dans le lecteur valeur : " + reverbValue)
                 //this.updateReverb(reverbValue);
             });
-            
+
 
             const shuffleButton = this.shadowRoot.querySelector('#shuffle');
             shuffleButton.addEventListener('click', () => this.toggleShuffle());
@@ -387,7 +423,7 @@ class Lecteur extends HTMLElement {
             this._queue.splice(currentSongIndex, 1);
 
             // Inform the parent component to update its queue as well
-            this.dispatchEvent(new CustomEvent('songEnded', {detail: {index: currentSongIndex}}));
+            this.dispatchEvent(new CustomEvent('songEnded', { detail: { index: currentSongIndex } }));
         }
     }
 }

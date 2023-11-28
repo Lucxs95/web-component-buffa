@@ -16,6 +16,8 @@ class MyAudioPlayer extends HTMLElement {
         this.isLooping = false;
         this._playList = playList;
         this._queue = [];
+        this.audioContext = new AudioContext();
+
     }
 
     get playlist() {
@@ -42,11 +44,22 @@ class MyAudioPlayer extends HTMLElement {
         }
         if (lecteurComponent) {
             lecteurComponent.queue = this._queue; // Pass the updated queue to the Lecteur component
+            lecteurComponent.SetAudioContext(this.audioContext); // Pass the audio context to the Lecteur component
         }
+
+
+        let outputNode =  lecteurComponent.getOutputNode();
+
+
 
 
 
         if (mixTableComponent) {
+
+
+            
+
+
             mixTableComponent.addEventListener('reverbChanged', (e) => {
                 const { reverbValue } = e.detail;
                 const lecteurComponent = this.shadowRoot.querySelector('lecteur-component');
@@ -58,6 +71,9 @@ class MyAudioPlayer extends HTMLElement {
 
         this.updateLecteurQueue();
         this.setupEventListeners();
+
+        outputNode.connect(this.audioContext.destination);
+
     }
 
     updateReverb(value) {
