@@ -47,11 +47,11 @@ class MyAudioPlayer extends HTMLElement {
     render() {
         this.shadowRoot.innerHTML = `
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-            <script type="module" src="lecteurDirectory/lecteur.js"></script>
-            <script type="module" src="playlistDirectory/playlist.js"></script>
-            <script type="module" src="queueDirectory/queue.js"></script>
-            <script type="module" src="mixTableDirectory/mixTable.js"></script>
-            <script type="module" src="visualizerDirectory/visualizer.js"></script>
+            <script type="module" src="./lecteurDirectory/lecteur.js"></script>
+            <script type="module" src="./playlistDirectory/playlist.js"></script>
+            <script type="module" src="./queueDirectory/queue.js"></script>
+            <script type="module" src="./mixTableDirectory/mixTable.js"></script>
+            <script type="module" src="./visualizerDirectory/visualizer.js"></script>
             <style>${styles}</style>
              <div class="section">
                 <trip-component class="section__background"></trip-component>
