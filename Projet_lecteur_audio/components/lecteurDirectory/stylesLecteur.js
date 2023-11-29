@@ -142,7 +142,7 @@ const styles = `
 
     .music-controls-item--icon {
     font-size: 1.2em;
-    color: #fff;
+    color: #Adacac;
 }
 
     .music-progress {
