@@ -38,9 +38,6 @@ class Queue extends HTMLElement {
                     <span class="queue__song-title">${song.musicName}</span>
                     <span class="queue__song-artist">${song.artist}</span>
                 </div>
-                <button class="queue__song-play">
-                    <i class="fas fa-play"></i>
-                </button>
                 <button class="queue__song-add">
                     <i class="fas ${addIcon}"></i>
                 </button>

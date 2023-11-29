@@ -131,7 +131,6 @@ class MyAudioPlayer extends HTMLElement {
         if (songExists ) {
             this._queue.push(song);
             this.updateQueueDisplay();
-            this.updateLecteurQueue(); // Update the Lecteur component whenever the queue is changed.
         } else {
             console.error('Song does not exist in the playlist');
         }

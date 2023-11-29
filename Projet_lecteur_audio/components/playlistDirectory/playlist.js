@@ -52,7 +52,6 @@ class Playlist extends HTMLElement {
     setupEventListeners() {
         this.shadowRoot.addEventListener('click', (e) => {
             const songAddButton = e.target.closest('.playlist__song-add');
-
             if (songAddButton) {
                 const songIndex = songAddButton.parentElement.getAttribute('data-song-index');
                 this.dispatchEvent(new CustomEvent('addSongToQueue', {
