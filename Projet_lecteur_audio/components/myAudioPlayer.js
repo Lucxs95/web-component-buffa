@@ -132,13 +132,26 @@ class MyAudioPlayer extends HTMLElement {
 
     addToQueue(song) {
         const songExists = this._playList.find(s => s === song);
-        if (songExists ) {
+        if (songExists) {
             this._queue.push(song);
             this.updateQueueDisplay();
+            // Ajouter la vérification pour démarrer la lecture si la file est initialement vide
+            if (this._queue.length === 1 && !this.isPlaying) {
+                this.playSong();
+            }
         } else {
             console.error('Song does not exist in the playlist');
         }
     }
+
+    playSong() {
+        const lecteurComponent = this.shadowRoot.querySelector('lecteur-component');
+        if (lecteurComponent && this._queue.length > 0) {
+            lecteurComponent.currentMusic = this._queue[0];
+            lecteurComponent.playMusic();
+        }
+    }
+
     updateQueueDisplay() {
         // Update the queue in the queue component
         const queueComponent = this.shadowRoot.querySelector('queue-component');
