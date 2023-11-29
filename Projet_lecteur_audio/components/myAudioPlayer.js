@@ -84,6 +84,10 @@ class MyAudioPlayer extends HTMLElement {
             const { startIndex } = e.detail;
             this.playSongAndAddRestToQueue(startIndex);
         });
+        this.shadowRoot.addEventListener('queueUpdated', (e) => {
+            this._queue = e.detail.newQueue;
+            this.updateQueueDisplay();
+        });
     }
 
     playSongAndAddRestToQueue(startIndex) {
