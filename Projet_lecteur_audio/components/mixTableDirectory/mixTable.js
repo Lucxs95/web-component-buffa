@@ -36,23 +36,9 @@ class MixTable extends HTMLElement {
                        
                         <div>
 
-                        <webaudio-slider 
-                        
-                        id="freq_60"    
-                        src="./assets/knobs/Yal-SliderV.png"
-                        knobsrc="./assets/knobs/Yal-SliderV.png"
-                        value=1
-                        min=-30
-                        max=30
-                        step=0.1
-                        basewidth=24
-                        baseheight=128
-                        knobwidth=24
-                        knobheight=24
-                        ditchlength=100
-                        tooltip="freq 60hz"></webaudio-slider>
+              
 
-                        // <input type="range" id="freq_60" min="-30" max="30" value="1" step="0.1">
+                         <input type="range" id="freq_60" min="-30" max="30" value="1" step="0.1">
 
                         <label id="label_0" for="freq_60">Freq 60hz:</label>
                     </div>
@@ -236,6 +222,7 @@ class MixTable extends HTMLElement {
         this.freq_10000.addEventListener('input', ({ target: { value } }) => {
             this.changeGain(5, value);
         });
+
 
 
         const reverbButton = this.shadowRoot.querySelector('#knob-2');
