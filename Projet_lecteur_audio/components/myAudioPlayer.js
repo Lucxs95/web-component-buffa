@@ -49,30 +49,18 @@ class MyAudioPlayer extends HTMLElement {
         }
 
 
-        let outputNode =  lecteurComponent.getOutputNode();
+        let outputNode = lecteurComponent.getOutputNode();
 
-
-        console.log(outputNode)
 
 
         if (mixTableComponent) {
 
             mixTableComponent.SetAudioContext(this.audioContext, outputNode);
-
-
-
-            mixTableComponent.addEventListener('reverbChanged', (e) => {
-                const { reverbValue } = e.detail;
-                const lecteurComponent = this.shadowRoot.querySelector('lecteur-component');
-                if (lecteurComponent) {
-                    lecteurComponent.dispatchEvent(new CustomEvent('updateReverb', { detail: { reverbValue } }));
-                }
-            });
         }
 
 
-        let outputNode2 =  mixTableComponent.getOutputNode();
-console.log(outputNode2)
+        let outputNode2 = mixTableComponent.getOutputNode();
+        console.log(outputNode2)
 
         this.updateLecteurQueue();
         this.setupEventListeners();
@@ -81,13 +69,7 @@ console.log(outputNode2)
 
     }
 
-    updateReverb(value) {
-        // Mettre à jour la reverb de l'audio avec la valeur donnée
-        // this.convolverNode.gain.value = value;
-        console.log(value)
-        this.dispatchEvent(new CustomEvent('reverbUpdate', { detail: { value } }));
 
-    }
 
     render() {
         this.shadowRoot.innerHTML = `
@@ -162,7 +144,7 @@ console.log(outputNode2)
 
     addToQueue(song) {
         const songExists = this._playList.find(s => s === song);
-        if (songExists ) {
+        if (songExists) {
             this._queue.push(song);
             this.updateQueueDisplay();
             this.updateLecteurQueue(); // Update the Lecteur component whenever the queue is changed.

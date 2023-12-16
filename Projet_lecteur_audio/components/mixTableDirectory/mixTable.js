@@ -25,55 +25,39 @@ class MixTable extends HTMLElement {
         this.shadowRoot.innerHTML = `
             <style>${stylesmixTable}</style>
             <div class="mixTable-wrapper">
-                <div class="mixTable">
-                    <div>
-                        <h3>Mix Table</h3>
+            <div class="mixTable">
+                <div>
+                    <h3>Mix Table</h3>
+                    <div class="knob-container">
+  
                         <div>
-                        <webaudio-knob id="knob-2" src="./assets/knobs/BSW_Knob_2.png" min="0" max="100"></webaudio-knob>
-
-                        <webaudio-slider min="0" max="100" value="50"></webaudio-slider>
-                       
-                       
+                            <webaudio-knob id="freq_60" src="./assets/knobs/sliderDJ.png" min="-30" max="30" value="1" step="0.1" size="40"></webaudio-knob>
+                            <p>60hz</p><label id="label_0" for="freq_60">0dB</label>
+                        </div>
                         <div>
-
-              
-
-                         <input type="range" id="freq_60" min="-30" max="30" value="1" step="0.1">
-
-                        <label id="label_0" for="freq_60">Freq 60hz:</label>
-                    </div>
-                    
-                    <div>
-                        <label id="label_1" for="freq_170">Freq 170hz:</label>
-                        <input type="range" id="freq_170" min="-30" max="30" value="1" step="0.1">
-                    </div>
-                    
-                    <div>
-                        <label id="label_2" for="freq_350">Freq 350hz:</label>
-                        <input type="range" id="freq_350" min="-30" max="30" value="1" step="0.1">
-                    </div>
-                    
-                    <div>
-                        <label id="label_3" for="freq_1000">Freq 1000hz:</label>
-                        <input type="range" id="freq_1000" min="-30" max="30" value="1" step="0.1">
-                    </div>
-                    
-                    <div>
-                        <label id="label_4" for="freq_3500">Freq 3500hz:</label>
-                        <input type="range" id="freq_3500" min="-30" max="30" value="1" step="0.1">
-                    </div>
-                    
-                    <div>
-                        <label id="label_5" for="freq_10000">Freq 10000hz:</label>
-                        <input type="range" id="freq_10000" min="-30" max="30" value="1" step="0.1">
-                    </div>
-                    
-
-                        
+                            <webaudio-knob id="freq_170" src="./assets/knobs/sliderDJ.png" min="-30" max="30" value="1" step="0.1" size="40"></webaudio-knob>
+                            <p>170hz</p><label id="label_1" for="freq_170">0dB</label>
+                        </div>
+                        <div>
+                            <webaudio-knob id="freq_350" src="./assets/knobs/sliderDJ.png" min="-30" max="30" value="1" step="0.1" size="40"></webaudio-knob>
+                            <p>350hz</p><label id="label_2" for="freq_350">0dB</label>
+                        </div>
+                        <div>
+                            <webaudio-knob id="freq_1000" src="./assets/knobs/sliderDJ.png" min="-30" max="30" value="1" step="0.1" size="40"></webaudio-knob>
+                            <p>1000hz</p><label id="label_3" for="freq_1000">0dB</label>
+                        </div>
+                        <div>
+                            <webaudio-knob id="freq_3500" src="./assets/knobs/sliderDJ.png" min="-30" max="30" value="1" step="0.1" size="40"></webaudio-knob>
+                            <p>3000hz</p><label id="label_4" for="freq_3500">0dB</label>
+                        </div>
+                        <div>
+                            <webaudio-knob id="freq_10000" src="./assets/knobs/sliderDJ.png" min="-30" max="30" value="1" step="0.1" size="40"></webaudio-knob>
+                            <p>10000hz</p><label id="label_5" for="freq_10000">0dB</label>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
         `;
 
 
