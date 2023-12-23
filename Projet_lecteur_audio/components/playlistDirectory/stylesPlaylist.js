@@ -66,6 +66,7 @@ const styles = `
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.2s;
+    margin-left: 10px;
 }
 
     .playlist__song-play:hover,.playlist__song-add:hover {

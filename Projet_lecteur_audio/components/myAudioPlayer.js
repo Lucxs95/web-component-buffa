@@ -107,11 +107,29 @@ class MyAudioPlayer extends HTMLElement {
         this.shadowRoot.addEventListener('removeSongFromQueue', (e) => {
             this.removeFromQueue(e.detail.index);
         });
-
+        this.shadowRoot.addEventListener('playSongAndAddRestToQueue', (e) => {
+            const { startIndex } = e.detail;
+            this.playSongAndAddRestToQueue(startIndex);
+        });
+        this.shadowRoot.addEventListener('queueUpdated', (e) => {
+            this._queue = e.detail.newQueue;
+            this.updateQueueDisplay();
+        });
         this.shadowRoot.addEventListener('reverb', () => {
             this.isPlaying = true;
         });
+    }
 
+    playSongAndAddRestToQueue(startIndex) {
+        this._queue = this._playList.slice(startIndex);
+        this.updateQueueDisplay();
+        this.updateLecteurQueue();
+
+        const lecteurComponent = this.shadowRoot.querySelector('lecteur-component');
+        if (lecteurComponent && this._queue.length > 0) {
+            lecteurComponent.currentMusic = this._queue[0];
+            lecteurComponent.playMusic();
+        }
     }
     updateLecteurQueue() {
         const lecteurComponent = this.shadowRoot.querySelector('lecteur-component');
@@ -147,9 +165,20 @@ class MyAudioPlayer extends HTMLElement {
         if (songExists) {
             this._queue.push(song);
             this.updateQueueDisplay();
-            this.updateLecteurQueue(); // Update the Lecteur component whenever the queue is changed.
+            // Ajouter la vérification pour démarrer la lecture si la file est initialement vide
+            if (this._queue.length === 1 && !this.isPlaying) {
+                this.playSong();
+            }
         } else {
             console.error('Song does not exist in the playlist');
+        }
+    }
+
+    playSong() {
+        const lecteurComponent = this.shadowRoot.querySelector('lecteur-component');
+        if (lecteurComponent && this._queue.length > 0) {
+            lecteurComponent.currentMusic = this._queue[0];
+            lecteurComponent.playMusic();
         }
     }
 

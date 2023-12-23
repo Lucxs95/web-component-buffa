@@ -305,8 +305,20 @@ class Lecteur extends HTMLElement {
         const currentIndex = this._queue.findIndex(music => music === this._currentMusic);
         const nextIndex = (currentIndex + 1) % this._queue.length;
         const nextSong = this._queue[nextIndex];
-        this.currentMusic = nextSong; // Update the current music with the next song
+
+        // Retirer la chanson actuelle de la file d'attente
+        this._queue.splice(currentIndex, 1);
+
+        // Mettre à jour la musique actuelle avec la chanson suivante
+        this.currentMusic = nextSong;
         this.playMusic();
+
+        // Émettre un événement pour notifier le changement de la file d'attente
+        this.dispatchEvent(new CustomEvent('queueUpdated', {
+            detail: { newQueue: this._queue },
+            bubbles: true,
+            composed: true
+        }));
     }
 
     prevMusic() {

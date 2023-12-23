@@ -1,0 +1,23 @@
+
+O
+Projet_lecteur_audio/index.html,5\7\577d5419117e8dee13cd169c22be77704b17f400
+`
+0Projet_lecteur_audio/components/myAudioPlayer.js,a\d\ad5d472e976e10f19e870fd291d9ecc3da4e2a14
+q
+AProjet_lecteur_audio/components/lecteurDirectory/stylesLecteur.js,2\8\2893750a4ac1c96fad7c5f4ac24cb57505e261dd
+w
+G.idea/sonarlint/issuestore/5/7/577d5419117e8dee13cd169c22be77704b17f400,f\b\fb81ab0f7602117fd73acbbd6701ec6b377a0ea9
+S
+#.idea/sonarlint/issuestore/index.pb,9\f\9fe84ebb15faf917b7def6236dba604453cc61e0
+k
+;Projet_lecteur_audio/components/lecteurDirectory/lecteur.js,0\b\0bd796c1434f63b4be50ab9d55e8b7b1e8ed05be
+m
+=Projet_lecteur_audio/components/playlistDirectory/playlist.js,e\c\eccfb2746153899a416b680291faac4e863187f1
+Å
+Q.idea/sonarlint/securityhotspotstore/5/7/577d5419117e8dee13cd169c22be77704b17f400,3\a\3a72352975f987acf7782e3fad07e398ac327494
+]
+-.idea/sonarlint/securityhotspotstore/index.pb,8\8\88a9255124c95bdc913197c120a8d560edc59c8e
+g
+7Projet_lecteur_audio/components/queueDirectory/queue.js,0\0\008bf14cde1a1a8212ac1f74953a3e7abe5b2dd6
+s
+CProjet_lecteur_audio/components/playlistDirectory/stylesPlaylist.js,0\2\02a31274251550ae61c6659d0b199d6c5e23dd9e
