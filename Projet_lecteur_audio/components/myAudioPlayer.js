@@ -17,6 +17,8 @@ class MyAudioPlayer extends HTMLElement {
         this.isLooping = false;
         this._playList = playList;
         this._queue = [];
+        this.audioContext = new AudioContext();
+
     }
 
     get playlist() {
@@ -26,11 +28,15 @@ class MyAudioPlayer extends HTMLElement {
         return this._queue;
     }
 
+
+
     connectedCallback() {
         this.render();
         const playlistComponent = this.shadowRoot.querySelector('playlist-component');
         const queueComponent = this.shadowRoot.querySelector('queue-component');
         const lecteurComponent = this.shadowRoot.querySelector('lecteur-component');
+        const mixTableComponent = this.shadowRoot.querySelector('mixtable-component');
+
         if (playlistComponent) {
             playlistComponent.playlist = this._playList;
         }
@@ -39,10 +45,31 @@ class MyAudioPlayer extends HTMLElement {
         }
         if (lecteurComponent) {
             lecteurComponent.queue = this._queue; // Pass the updated queue to the Lecteur component
+            lecteurComponent.SetAudioContext(this.audioContext); // Pass the audio context to the Lecteur component
         }
+
+
+        let outputNode = lecteurComponent.getOutputNode();
+
+
+
+        if (mixTableComponent) {
+
+            mixTableComponent.SetAudioContext(this.audioContext, outputNode);
+        }
+
+
+        let outputNode2 = mixTableComponent.getOutputNode();
+        console.log(outputNode2)
+
         this.updateLecteurQueue();
         this.setupEventListeners();
+
+        outputNode2.connect(this.audioContext.destination);
+
     }
+
+
 
     render() {
         this.shadowRoot.innerHTML = `
@@ -87,6 +114,9 @@ class MyAudioPlayer extends HTMLElement {
         this.shadowRoot.addEventListener('queueUpdated', (e) => {
             this._queue = e.detail.newQueue;
             this.updateQueueDisplay();
+        });
+        this.shadowRoot.addEventListener('reverb', () => {
+            this.isPlaying = true;
         });
     }
 

@@ -1,26 +1,19 @@
 import stylesLecteur from './stylesLecteur.js';
 
 class Lecteur extends HTMLElement {
+
     constructor() {
         super();
-        this.attachShadow({mode: 'open'});
+        this.attachShadow({ mode: 'open' });
 
         // State properties
         this.isPlaying = false;
         this.isShuffled = false;
         this.isLooping = false;
         this._queue = []; // Queue will be set by parent
-        this.audioContext = new AudioContext();
-        this.gainNode = this.audioContext.createGain();
-        this.pannerNode = this.audioContext.createStereoPanner();
-        this.biquadFilter = this.audioContext.createBiquadFilter();
-        this.audioElement = new Audio();
-        this.audioSrc = this.audioContext.createMediaElementSource(this.audioElement);
 
-        // Connect nodes
-        this.audioSrc.connect(this.gainNode)
-            .connect(this.audioContext.destination);
     }
+
 
     connectedCallback() {
         if (this._queue.length > 0) {
@@ -28,6 +21,34 @@ class Lecteur extends HTMLElement {
             this.render();
         }
         this.setupEventListeners();
+    }
+
+    getInputNode() {
+        return this.inputGainNode;
+    }
+
+    getOutputNode() {
+        return this.outputGainNode;
+    }
+
+    SetAudioContext(newContext) {
+        this.audioContext = newContext;
+        this.buildGraph();
+    }
+
+    buildGraph() {
+        this.inputGainNode = this.audioContext.createGain();
+        this.outputGainNode = this.audioContext.createGain();
+
+        this.audioElement = new Audio();
+        this.audioSrc = this.audioContext.createMediaElementSource(this.audioElement);
+
+        // Connect nodes
+        // on connecte inputGain au noeud du lecteur
+        // this.inputGainNode.connect(this.audioSrc);
+
+        this.audioSrc.connect(this.outputGainNode);
+
     }
 
     get currentMusic() {
@@ -38,12 +59,13 @@ class Lecteur extends HTMLElement {
         this._currentMusic = music;
         this.render();
 
-        // Dispatch an event with the audio source
-        this.dispatchEvent(new CustomEvent('audioSourceChanged', {
-            detail: { audioSrc: this.audioSrc },
-            bubbles: true, // To let the event bubble up through the DOM
-            composed: true // To let the event cross the shadow DOM boundary
-        }));
+               // Dispatch an event with the audio source
+               this.dispatchEvent(new CustomEvent('audioSourceChanged', {
+                detail: { audioSrc: this.audioSrc },
+                bubbles: true, // To let the event bubble up through the DOM
+                composed: true // To let the event cross the shadow DOM boundary
+            }));
+    
     }
 
     get queue() {
@@ -164,10 +186,13 @@ class Lecteur extends HTMLElement {
 
     }
 
+
     updateVolume() {
         const volumeSlider = this.shadowRoot.querySelector('#volumeSlider');
-        this.gainNode.gain.value = volumeSlider.value;
+        this.outputGainNode.gain.value = volumeSlider.value;
     }
+
+
 
     toggleShuffle() {
         const shuffleButton = this.shadowRoot.querySelector('#shuffle');
@@ -356,6 +381,15 @@ class Lecteur extends HTMLElement {
             if (volumeSlider) {
                 volumeSlider.addEventListener('input', () => this.updateVolume());
             }
+
+            this.addEventListener('updateReverb', (e) => {
+                const { reverbValue } = e.detail;
+                // Mettre à jour la reverb de l'audio avec la valeur donnée
+                console.log("dans le lecteur valeur : " + reverbValue)
+                //this.updateReverb(reverbValue);
+            });
+
+
             const shuffleButton = this.shadowRoot.querySelector('#shuffle');
             shuffleButton.addEventListener('click', () => this.toggleShuffle());
 
@@ -385,7 +419,7 @@ class Lecteur extends HTMLElement {
             this._queue.splice(currentSongIndex, 1);
 
             // Inform the parent component to update its queue as well
-            this.dispatchEvent(new CustomEvent('songEnded', {detail: {index: currentSongIndex}}));
+            this.dispatchEvent(new CustomEvent('songEnded', { detail: { index: currentSongIndex } }));
         }
     }
 }
